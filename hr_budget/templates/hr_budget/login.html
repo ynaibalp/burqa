@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burqa - Login RH</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes auroraPulse {
+            0% { transform: translate(0px, 0px) scale(1); opacity: 0.4; }
+            33% { transform: translate(30px, -40px) scale(1.2); opacity: 0.7; }
+            66% { transform: translate(-20px, 30px) scale(0.9); opacity: 0.5; }
+            100% { transform: translate(0px, 0px) scale(1); opacity: 0.4; }
+        }
+        .animated-bg {
+            background: linear-gradient(-45deg, #090d16, #111827, #1e1b4b, #312e81);
+            background-size: 400% 400%;
+            animation: gradientMove 18s ease infinite;
+        }
+        .light-animated-bg {
+            background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #ede9fe, #e0e7ff);
+            background-size: 400% 400%;
+            animation: gradientMove 18s ease infinite;
+        }
+        .aurora-orb {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.45) 0%, rgba(168, 85, 247, 0.35) 50%, rgba(59, 130, 246, 0) 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: auroraPulse 10s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .light-aurora-orb {
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.2) 50%, rgba(59, 130, 246, 0) 70%);
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .light-glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body id="page-body" class="h-full animated-bg flex items-center justify-center p-6 text-slate-100 font-sans relative overflow-hidden transition-colors duration-300">
+    
+    <!-- Theme Toggle Button -->
+    <button onclick="toggleTheme()" class="absolute top-6 right-6 z-50 p-3 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-lg transition flex items-center justify-center" id="theme-btn" title="Alternar Tema">
+        <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <svg id="moon-icon" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+    </button>
+
+    <!-- Central Aurora Glowing Orb behind the login modal -->
+    <div id="aurora-orb" class="aurora-orb"></div>
+
+    <div id="login-card" class="w-full max-w-md glass rounded-3xl shadow-2xl p-8 border border-slate-700/50 relative z-10 overflow-hidden transition-all duration-300">
+        <!-- Additional glowing blur accents -->
+        <div class="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-violet-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="text-center mb-8 relative z-10">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white font-bold text-2xl shadow-lg shadow-indigo-500/40 mb-4 ring-2 ring-indigo-400/30">
+                B
+            </div>
+            <h1 id="title-text" class="text-3xl font-extrabold tracking-tight text-white">Burqa RH</h1>
+            <p id="subtitle-text" class="text-sm text-slate-400 mt-1">Sistema Orçamentário e Headcount</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center gap-3 relative z-10">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <span>Usuário ou senha incorretos. Tente novamente.</span>
+        </div>
+        {% endif %}
+
+        <form method="post" class="space-y-6 relative z-10">
+            {% csrf_token %}
+            <div>
+                <label id="label-user" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Usuário</label>
+                <input type="text" name="username" required autofocus
+                    class="input-field w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition duration-200"
+                    placeholder="Digite seu usuário (ex: admin)">
+            </div>
+
+            <div>
+                <label id="label-pass" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Senha</label>
+                <input type="password" name="password" required
+                    class="input-field w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition duration-200"
+                    placeholder="••••••••">
+            </div>
+
+            <button type="submit"
+                class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold shadow-lg shadow-indigo-600/40 hover:shadow-indigo-600/60 active:scale-[0.99] transition duration-200">
+                Acessar Sistema
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-700/40 text-center relative z-10">
+            <p id="footer-text" class="text-xs text-slate-500">Credenciais padrão para teste: <span class="text-indigo-400 font-mono font-medium">admin</span> / <span class="text-indigo-400 font-mono font-medium">admin123</span></p>
+        </div>
+    </div>
+
+    <script>
+        function setTheme(isLight) {
+            const body = document.getElementById('page-body');
+            const card = document.getElementById('login-card');
+            const orb = document.getElementById('aurora-orb');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const themeBtn = document.getElementById('theme-btn');
+            const titleText = document.getElementById('title-text');
+            const subtitleText = document.getElementById('subtitle-text');
+            const labelUser = document.getElementById('label-user');
+            const labelPass = document.getElementById('label-pass');
+            const footerText = document.getElementById('footer-text');
+            const inputs = document.querySelectorAll('.input-field');
+
+            if (isLight) {
+                body.className = body.className.replace('animated-bg text-slate-100', 'light-animated-bg text-slate-900');
+                card.className = card.className.replace('glass border-slate-700/50', 'light-glass border-slate-200');
+                orb.classList.add('light-aurora-orb');
+                sunIcon.classList.remove('hidden');
+                sunIcon.classList.add('block');
+                moonIcon.classList.remove('block');
+                moonIcon.classList.add('hidden');
+                themeBtn.className = "absolute top-6 right-6 z-50 p-3 rounded-full bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-lg transition flex items-center justify-center";
+                
+                titleText.className = titleText.className.replace('text-white', 'text-slate-900');
+                subtitleText.className = subtitleText.className.replace('text-slate-400', 'text-slate-600');
+                labelUser.className = labelUser.className.replace('text-slate-400', 'text-slate-700');
+                labelPass.className = labelPass.className.replace('text-slate-400', 'text-slate-700');
+                footerText.className = footerText.className.replace('text-slate-500', 'text-slate-600');
+
+                inputs.forEach(inp => {
+                    inp.className = inp.className.replace('bg-slate-900/60 border-slate-700/80 text-white placeholder-slate-500', 'bg-white/80 border-slate-300 text-slate-900 placeholder-slate-400');
+                });
+                localStorage.setItem('burqa_theme', 'light');
+            } else {
+                body.className = body.className.replace('light-animated-bg text-slate-900', 'animated-bg text-slate-100');
+                card.className = card.className.replace('light-glass border-slate-200', 'glass border-slate-700/50');
+                orb.classList.remove('light-aurora-orb');
+                sunIcon.classList.remove('block');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                moonIcon.classList.add('block');
+                themeBtn.className = "absolute top-6 right-6 z-50 p-3 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-lg transition flex items-center justify-center";
+
+                titleText.className = titleText.className.replace('text-slate-900', 'text-white');
+                subtitleText.className = subtitleText.className.replace('text-slate-600', 'text-slate-400');
+                labelUser.className = labelUser.className.replace('text-slate-700', 'text-slate-400');
+                labelPass.className = labelPass.className.replace('text-slate-700', 'text-slate-400');
+                footerText.className = footerText.className.replace('text-slate-600', 'text-slate-500');
+
+                inputs.forEach(inp => {
+                    inp.className = inp.className.replace('bg-white/80 border-slate-300 text-slate-900 placeholder-slate-400', 'bg-slate-900/60 border-slate-700/80 text-white placeholder-slate-500');
+                });
+                localStorage.setItem('burqa_theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('burqa_theme');
+            setTheme(currentTheme !== 'light');
+        }
+
+        // Initialize theme on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('burqa_theme') === 'light') {
+                setTheme(true);
+            }
+        });
+    </script>
+</body>
+</html>

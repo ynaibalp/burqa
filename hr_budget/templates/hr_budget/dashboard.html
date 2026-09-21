@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full bg-slate-950" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burqa - Dashboard RH</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body id="page-body" class="h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300">
+
+    <!-- Top Navbar -->
+    <header id="navbar" class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 text-white">
+                B
+            </div>
+            <div>
+                <span id="nav-title" class="font-bold text-lg tracking-tight text-white">Burqa RH</span>
+                <span class="text-xs text-indigo-400 block font-mono">Enterprise Budget & Headcount</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- Theme Toggle Button -->
+            <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center" id="theme-btn" title="Alternar Tema">
+                <svg id="sun-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <svg id="moon-icon" class="w-4 h-4 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            </button>
+
+            <span id="user-greeting" class="text-sm text-slate-300 hidden sm:inline">Olá, <strong class="text-white">{{ request.user.username|title }}</strong></span>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 border border-slate-700 hover:border-rose-500/30 transition duration-200">
+                    Sair
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-8">
+
+        <!-- Welcome Banner -->
+        <div id="welcome-banner" class="bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-slate-900/50 border border-indigo-500/20 rounded-3xl p-8 relative overflow-hidden shadow-2xl transition-colors duration-300">
+            <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <h1 id="banner-title" class="text-3xl font-extrabold tracking-tight text-white mb-2">Painel Orçamentário de RH</h1>
+            <p id="banner-desc" class="text-slate-300 max-w-2xl text-sm leading-relaxed">
+                Gerencie o quadro de funcionários, controle o orçamento anual e simule cenários estratégicos de custos e expansão de equipe.
+            </p>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Total de Funcionários</p>
+                <p class="stat-val text-3xl font-extrabold text-white">{{ total_employees }}</p>
+                <span class="text-xs text-emerald-400 mt-2 inline-block font-medium">✓ Quadro ativo atualizado</span>
+            </div>
+            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Folha Salarial Mensal</p>
+                <p class="stat-val text-3xl font-extrabold text-white">R$ {{ total_salary|floatformat:2 }}</p>
+                <span class="stat-sub text-xs text-slate-400 mt-2 inline-block">Média R$ {{ avg_salary|floatformat:2 }}/colaborador</span>
+            </div>
+            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Custo Total (c/ Encargos)</p>
+                <p class="text-3xl font-extrabold text-indigo-400">R$ {{ total_cost_monthly|floatformat:2 }}</p>
+                <span class="text-xs text-indigo-400 mt-2 inline-block">Inclui encargos e benefícios</span>
+            </div>
+            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Orçamento Anual (Projetado)</p>
+                <p class="text-3xl font-extrabold text-emerald-400">R$ {{ annual_budget|floatformat:2 }}</p>
+                <span class="text-xs text-emerald-500 mt-2 inline-block">Base 12 meses + Despesas RH</span>
+            </div>
+        </div>
+
+        <!-- 3 Main Action Modules (Buttons requested by user) -->
+        <div>
+            <h2 id="modules-heading" class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Módulos Principais
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Module 1: Funcionarios -->
+                <a href="{% url 'employees' %}" class="module-card group bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-indigo-600/10 rounded-full blur-2xl group-hover:bg-indigo-600/20 transition duration-300"></div>
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
+                            1
+                        </div>
+                        <h3 class="mod-title text-2xl font-bold text-white mb-2 group-hover:text-indigo-500 transition duration-200">Funcionários</h3>
+                        <p class="mod-desc text-slate-400 text-sm leading-relaxed mb-6">
+                            Visualize, filtre e gerencie os {{ total_employees }} colaboradores, cargos, salários, status e departamentos da empresa.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 text-indigo-400 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
+                        <span>Acessar Módulo</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </a>
+
+                <!-- Module 2: Orcamento -->
+                <a href="{% url 'budget' %}" class="module-card group bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-emerald-600/10 rounded-full blur-2xl group-hover:bg-emerald-600/20 transition duration-300"></div>
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
+                            2
+                        </div>
+                        <h3 class="mod-title text-2xl font-bold text-white mb-2 group-hover:text-emerald-500 transition duration-200">Orçamento</h3>
+                        <p class="mod-desc text-slate-400 text-sm leading-relaxed mb-6">
+                            Acompanhe o orçamento detalhado de RH, despesas operacionais por departamento, encargos trabalhistas e custos mensais.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 text-emerald-400 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
+                        <span>Acessar Módulo</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </a>
+
+                <!-- Module 3: Simulador de Cenarios -->
+                <a href="{% url 'simulator' %}" class="module-card group bg-slate-900/80 border border-slate-800 hover:border-violet-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-violet-600/10 rounded-full blur-2xl group-hover:bg-violet-600/20 transition duration-300"></div>
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
+                            3
+                        </div>
+                        <h3 class="mod-title text-2xl font-bold text-white mb-2 group-hover:text-violet-500 transition duration-200">Simulador de Cenários</h3>
+                        <p class="mod-desc text-slate-400 text-sm leading-relaxed mb-6">
+                            Simule reajustes salariais, novas contratações em massa e desligamentos para analisar o impacto financeiro em tempo real.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 text-violet-400 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
+                        <span>Acessar Módulo</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer" class="mt-auto border-t border-slate-900 py-6 text-center text-xs text-slate-500 transition-colors duration-300">
+        Burqa RH &bull; Sistema de Gestão Orçamentária Corporativa
+    </footer>
+
+    <script>
+        function setTheme(isLight) {
+            const body = document.getElementById('page-body');
+            const htmlRoot = document.getElementById('html-root');
+            const navbar = document.getElementById('navbar');
+            const navTitle = document.getElementById('nav-title');
+            const userGreeting = document.getElementById('user-greeting');
+            const welcomeBanner = document.getElementById('welcome-banner');
+            const bannerTitle = document.getElementById('banner-title');
+            const bannerDesc = document.getElementById('banner-desc');
+            const modulesHeading = document.getElementById('modules-heading');
+            const footer = document.getElementById('footer');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const themeBtn = document.getElementById('theme-btn');
+            const statCards = document.querySelectorAll('.stat-card');
+            const moduleCards = document.querySelectorAll('.module-card');
+            const statVals = document.querySelectorAll('.stat-val');
+            const statSubs = document.querySelectorAll('.stat-sub');
+            const modTitles = document.querySelectorAll('.mod-title');
+            const modDescs = document.querySelectorAll('.mod-desc');
+
+            if (isLight) {
+                htmlRoot.className = "h-full bg-slate-100";
+                body.className = "h-full bg-slate-100 text-slate-900 font-sans flex flex-col transition-colors duration-300";
+                navbar.className = "bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 shadow-sm";
+                navTitle.className = "font-bold text-lg tracking-tight text-slate-900";
+                userGreeting.className = "text-sm text-slate-600 hidden sm:inline";
+                
+                welcomeBanner.className = "bg-gradient-to-r from-indigo-100 via-purple-50 to-slate-100 border border-indigo-200 rounded-3xl p-8 relative overflow-hidden shadow-lg transition-colors duration-300";
+                bannerTitle.className = "text-3xl font-extrabold tracking-tight text-slate-900 mb-2";
+                bannerDesc.className = "text-slate-600 max-w-2xl text-sm leading-relaxed";
+                modulesHeading.className = "text-xl font-bold text-slate-900 mb-6 flex items-center gap-2";
+                footer.className = "mt-auto border-t border-slate-200 py-6 text-center text-xs text-slate-500 transition-colors duration-300 bg-white";
+
+                sunIcon.classList.remove('hidden');
+                sunIcon.classList.add('block');
+                moonIcon.classList.remove('block');
+                moonIcon.classList.add('hidden');
+                themeBtn.className = "p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center justify-center shadow-sm";
+
+                statCards.forEach(c => {
+                    c.className = "stat-card bg-white border border-slate-200 rounded-2xl p-6 shadow-md transition-colors duration-300";
+                });
+                moduleCards.forEach(c => {
+                    c.className = "module-card group bg-white border border-slate-200 hover:border-indigo-400 rounded-3xl p-8 shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between";
+                });
+                statVals.forEach(v => {
+                    if(!v.classList.contains('text-indigo-400') && !v.classList.contains('text-emerald-400')) {
+                        v.className = "stat-val text-3xl font-extrabold text-slate-900";
+                    }
+                });
+                statSubs.forEach(s => {
+                    if(!s.classList.contains('text-emerald-400')) {
+                        s.className = "stat-sub text-xs text-slate-500 mt-2 inline-block";
+                    }
+                });
+                modTitles.forEach(t => {
+                    t.className = "mod-title text-2xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition duration-200";
+                });
+                modDescs.forEach(d => {
+                    d.className = "mod-desc text-slate-600 text-sm leading-relaxed mb-6";
+                });
+
+                localStorage.setItem('burqa_theme', 'light');
+            } else {
+                htmlRoot.className = "h-full bg-slate-950";
+                body.className = "h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300";
+                navbar.className = "bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300";
+                navTitle.className = "font-bold text-lg tracking-tight text-white";
+                userGreeting.className = "text-sm text-slate-300 hidden sm:inline";
+
+                welcomeBanner.className = "bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-slate-900/50 border border-indigo-500/20 rounded-3xl p-8 relative overflow-hidden shadow-2xl transition-colors duration-300";
+                bannerTitle.className = "text-3xl font-extrabold tracking-tight text-white mb-2";
+                bannerDesc.className = "text-slate-300 max-w-2xl text-sm leading-relaxed";
+                modulesHeading.className = "text-xl font-bold text-white mb-6 flex items-center gap-2";
+                footer.className = "mt-auto border-t border-slate-900 py-6 text-center text-xs text-slate-500 transition-colors duration-300";
+
+                sunIcon.classList.remove('block');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                moonIcon.classList.add('block');
+                themeBtn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center";
+
+                statCards.forEach(c => {
+                    c.className = "stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300";
+                });
+                moduleCards.forEach(c => {
+                    c.className = "module-card group bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between";
+                });
+                statVals.forEach(v => {
+                    if(!v.classList.contains('text-indigo-400') && !v.classList.contains('text-emerald-400')) {
+                        v.className = "stat-val text-3xl font-extrabold text-white";
+                    }
+                });
+                statSubs.forEach(s => {
+                    if(!s.classList.contains('text-emerald-400')) {
+                        s.className = "stat-sub text-xs text-slate-400 mt-2 inline-block";
+                    }
+                });
+                modTitles.forEach(t => {
+                    t.className = "mod-title text-2xl font-bold text-white mb-2 group-hover:text-indigo-400 transition duration-200";
+                });
+                modDescs.forEach(d => {
+                    d.className = "mod-desc text-slate-400 text-sm leading-relaxed mb-6";
+                });
+
+                localStorage.setItem('burqa_theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('burqa_theme');
+            setTheme(currentTheme !== 'light');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('burqa_theme') === 'light') {
+                setTheme(true);
+            }
+        });
+    </script>
+</body>
+</html>

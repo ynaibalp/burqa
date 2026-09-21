@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full bg-slate-950" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burqa - Orçamento RH</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body id="page-body" class="h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300">
+
+    <!-- Top Navbar -->
+    <header id="navbar" class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300">
+        <div class="flex items-center gap-4">
+            <a href="{% url 'dashboard' %}" id="back-btn" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            </a>
+            <div>
+                <span id="nav-title" class="font-bold text-lg tracking-tight text-white">2. Módulo Orçamento</span>
+                <span class="text-xs text-emerald-400 block font-mono">Controle Financeiro & Custos</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <!-- Theme Toggle Button -->
+            <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center" id="theme-btn" title="Alternar Tema">
+                <svg id="sun-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <svg id="moon-icon" class="w-4 h-4 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            </button>
+            <a href="{% url 'dashboard' %}" id="dash-link" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                Voltar ao Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-8">
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Folha Salarial Anual (Projetada)</p>
+                <p class="stat-val text-3xl font-extrabold text-white">R$ {{ annual_payroll|floatformat:2 }}</p>
+                <span class="stat-sub text-xs text-slate-400 mt-2 inline-block">12 meses de salários base</span>
+            </div>
+            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Encargos e Benefícios Anuais</p>
+                <p class="text-3xl font-extrabold text-indigo-400">R$ {{ annual_charges|floatformat:2 }}</p>
+                <span class="text-xs text-indigo-400 mt-2 inline-block">INSS, FGTS, Provisões e VR/Plano</span>
+            </div>
+            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Despesas Operacionais RH (Ano)</p>
+                <p class="text-3xl font-extrabold text-emerald-400">R$ {{ total_expenses|floatformat:2 }}</p>
+                <span class="text-xs text-emerald-500 mt-2 inline-block">Recrutamento, T&D, Eventos, Softwares</span>
+            </div>
+        </div>
+
+        <!-- Department Cost Breakdown -->
+        <div id="dept-card" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 transition-colors duration-300">
+            <h2 id="dept-heading" class="text-xl font-bold text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/></svg>
+                Custos por Departamento (Mensal)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for dept in department_costs %}
+                <div class="dept-box bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-md space-y-3 transition-colors duration-300">
+                    <div class="flex items-center justify-between">
+                        <span class="dept-name font-bold text-lg text-white">{{ dept.name }}</span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">{{ dept.count }} func.</span>
+                    </div>
+                    <div class="pt-3 border-t border-slate-800 dept-footer flex justify-between items-center">
+                        <span class="text-xs text-slate-400 uppercase tracking-wider">Custo Mensal Total:</span>
+                        <span class="font-bold text-emerald-400 text-lg">R$ {{ dept.total_cost|floatformat:2 }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Operating Expenses Table -->
+        <div id="table-card" class="bg-slate-900/60 border border-slate-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
+            <div id="table-header-box" class="p-6 border-b border-slate-800 transition-colors duration-300">
+                <h2 id="table-title" class="text-xl font-bold text-white">Despesas Operacionais Recentes (2026)</h2>
+                <p id="table-subtitle" class="text-xs text-slate-400 mt-1">Lançamentos de recrutamento, treinamento, eventos e softwares</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr id="table-head" class="border-b border-slate-800 bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <th class="p-4">Categoria</th>
+                            <th class="p-4">Departamento</th>
+                            <th class="p-4">Descrição</th>
+                            <th class="p-4">Mês/Ano</th>
+                            <th class="p-4">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-800 text-sm">
+                        {% for exp in expenses %}
+                        <tr class="exp-row hover:bg-slate-800/40 transition">
+                            <td class="p-4 font-semibold text-white exp-cat">{{ exp.category }}</td>
+                            <td class="p-4 text-slate-300 exp-dept">{{ exp.department.name|default:"Geral Corporativo" }}</td>
+                            <td class="p-4 text-slate-400 text-xs exp-desc">{{ exp.description|default:"-" }}</td>
+                            <td class="p-4 font-mono text-slate-300">{{ exp.month }}/{{ exp.year }}</td>
+                            <td class="p-4 font-semibold text-emerald-400">R$ {{ exp.amount|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function setTheme(isLight) {
+            const body = document.getElementById('page-body');
+            const htmlRoot = document.getElementById('html-root');
+            const navbar = document.getElementById('navbar');
+            const backBtn = document.getElementById('back-btn');
+            const dashLink = document.getElementById('dash-link');
+            const navTitle = document.getElementById('nav-title');
+            const deptCard = document.getElementById('dept-card');
+            const deptHeading = document.getElementById('dept-heading');
+            const tableCard = document.getElementById('table-card');
+            const tableHeaderBox = document.getElementById('table-header-box');
+            const tableTitle = document.getElementById('table-title');
+            const tableSubtitle = document.getElementById('table-subtitle');
+            const tableHead = document.getElementById('table-head');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const themeBtn = document.getElementById('theme-btn');
+            const statCards = document.querySelectorAll('.stat-card');
+            const statVals = document.querySelectorAll('.stat-val');
+            const statSubs = document.querySelectorAll('.stat-sub');
+            const deptBoxes = document.querySelectorAll('.dept-box');
+            const deptNames = document.querySelectorAll('.dept-name');
+            const deptFooters = document.querySelectorAll('.dept-footer');
+            const expRows = document.querySelectorAll('.exp-row');
+            const expCats = document.querySelectorAll('.exp-cat');
+            const expDepts = document.querySelectorAll('.exp-dept');
+            const expDescs = document.querySelectorAll('.exp-desc');
+
+            if (isLight) {
+                htmlRoot.className = "h-full bg-slate-100";
+                body.className = "h-full bg-slate-100 text-slate-900 font-sans flex flex-col transition-colors duration-300";
+                navbar.className = "bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 shadow-sm";
+                navTitle.className = "font-bold text-lg tracking-tight text-slate-900";
+                backBtn.className = "w-10 h-10 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition shadow-sm";
+                dashLink.className = "px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition shadow-sm";
+                
+                deptCard.className = "bg-white border border-slate-200 rounded-2xl p-6 shadow-md space-y-6 transition-colors duration-300";
+                deptHeading.className = "text-xl font-bold text-slate-900 flex items-center gap-2";
+                tableCard.className = "bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden transition-colors duration-300";
+                tableHeaderBox.className = "p-6 border-b border-slate-200 transition-colors duration-300 bg-slate-50";
+                tableTitle.className = "text-xl font-bold text-slate-900";
+                tableSubtitle.className = "text-xs text-slate-500 mt-1";
+                tableHead.className = "border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600";
+
+                sunIcon.classList.remove('hidden');
+                sunIcon.classList.add('block');
+                moonIcon.classList.remove('block');
+                moonIcon.classList.add('hidden');
+                themeBtn.className = "p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center justify-center shadow-sm";
+
+                statCards.forEach(c => c.className = "stat-card bg-white border border-slate-200 rounded-2xl p-6 shadow-md transition-colors duration-300");
+                statVals.forEach(v => {
+                    if(!v.classList.contains('text-indigo-400') && !v.classList.contains('text-emerald-400')) {
+                        v.className = "stat-val text-3xl font-extrabold text-slate-900";
+                    }
+                });
+                statSubs.forEach(s => {
+                    if(!s.classList.contains('text-emerald-400')) {
+                        s.className = "stat-sub text-xs text-slate-500 mt-2 inline-block";
+                    }
+                });
+                deptBoxes.forEach(b => b.className = "dept-box bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm space-y-3 transition-colors duration-300");
+                deptNames.forEach(n => n.className = "dept-name font-bold text-lg text-slate-900");
+                deptFooters.forEach(f => f.className = "pt-3 border-t border-slate-200 dept-footer flex justify-between items-center");
+                expRows.forEach(r => r.className = "exp-row hover:bg-slate-50 transition border-b border-slate-100 last:border-b-0");
+                expCats.forEach(c => c.className = "p-4 font-semibold text-slate-900 exp-cat");
+                expDepts.forEach(d => d.className = "p-4 text-slate-700 exp-dept");
+                expDescs.forEach(de => de.className = "p-4 text-slate-500 text-xs exp-desc");
+
+                localStorage.setItem('burqa_theme', 'light');
+            } else {
+                htmlRoot.className = "h-full bg-slate-950";
+                body.className = "h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300";
+                navbar.className = "bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300";
+                navTitle.className = "font-bold text-lg tracking-tight text-white";
+                backBtn.className = "w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition";
+                dashLink.className = "px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition";
+
+                deptCard.className = "bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 transition-colors duration-300";
+                deptHeading.className = "text-xl font-bold text-white flex items-center gap-2";
+                tableCard.className = "bg-slate-900/60 border border-slate-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300";
+                tableHeaderBox.className = "p-6 border-b border-slate-800 transition-colors duration-300";
+                tableTitle.className = "text-xl font-bold text-white";
+                tableSubtitle.className = "text-xs text-slate-400 mt-1";
+                tableHead.className = "border-b border-slate-800 bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-400";
+
+                sunIcon.classList.remove('block');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                moonIcon.classList.add('block');
+                themeBtn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center";
+
+                statCards.forEach(c => c.className = "stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300");
+                statVals.forEach(v => {
+                    if(!v.classList.contains('text-indigo-400') && !v.classList.contains('text-emerald-400')) {
+                        v.className = "stat-val text-3xl font-extrabold text-white";
+                    }
+                });
+                statSubs.forEach(s => {
+                    if(!s.classList.contains('text-emerald-400')) {
+                        s.className = "stat-sub text-xs text-slate-400 mt-2 inline-block";
+                    }
+                });
+                deptBoxes.forEach(b => b.className = "dept-box bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-md space-y-3 transition-colors duration-300");
+                deptNames.forEach(n => n.className = "dept-name font-bold text-lg text-white");
+                deptFooters.forEach(f => f.className = "pt-3 border-t border-slate-800 dept-footer flex justify-between items-center");
+                expRows.forEach(r => r.className = "exp-row hover:bg-slate-800/40 transition");
+                expCats.forEach(c => c.className = "p-4 font-semibold text-white exp-cat");
+                expDepts.forEach(d => d.className = "p-4 text-slate-300 exp-dept");
+                expDescs.forEach(de => de.className = "p-4 text-slate-400 text-xs exp-desc");
+
+                localStorage.setItem('burqa_theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('burqa_theme');
+            setTheme(currentTheme !== 'light');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('burqa_theme') === 'light') {
+                setTheme(true);
+            }
+        });
+    </script>
+</body>
+</html>

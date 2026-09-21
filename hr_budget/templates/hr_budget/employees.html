@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full bg-slate-950" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burqa - Funcionários</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body id="page-body" class="h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300">
+
+    <!-- Top Navbar -->
+    <header id="navbar" class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300">
+        <div class="flex items-center gap-4">
+            <a href="{% url 'dashboard' %}" id="back-btn" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            </a>
+            <div>
+                <span id="nav-title" class="font-bold text-lg tracking-tight text-white">1. Módulo Funcionários</span>
+                <span class="text-xs text-indigo-400 block font-mono">Headcount Total: {{ employees.paginator.count }}</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <!-- Theme Toggle Button -->
+            <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center" id="theme-btn" title="Alternar Tema">
+                <svg id="sun-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <svg id="moon-icon" class="w-4 h-4 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            </button>
+            <a href="{% url 'dashboard' %}" id="dash-link" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                Voltar ao Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-6">
+
+        <!-- Search & Filters -->
+        <form method="get" id="filter-form" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300">
+            <div class="w-full md:w-1/3">
+                <label class="filter-label block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Buscar Funcionário</label>
+                <input type="text" name="q" value="{{ query }}" placeholder="Nome ou CPF..."
+                    class="filter-input w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="w-full md:w-1/4">
+                <label class="filter-label block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Departamento</label>
+                <select name="dept" class="filter-input w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500">
+                    <option value="">Todos os Departamentos</option>
+                    {% for d in departments %}
+                    <option value="{{ d.id }}" {% if dept_id == d.id|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="w-full md:w-auto flex items-end gap-3 self-end">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition">
+                    Filtrar
+                </button>
+                <a href="{% url 'employees' %}" id="clear-btn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition">
+                    Limpar
+                </a>
+            </div>
+        </form>
+
+        <!-- Employees Table -->
+        <div id="table-card" class="bg-slate-900/60 border border-slate-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr id="table-head" class="border-b border-slate-800 bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <th class="p-4">Colaborador</th>
+                            <th class="p-4">CPF</th>
+                            <th class="p-4">Departamento</th>
+                            <th class="p-4">Cargo</th>
+                            <th class="p-4">Salário Base</th>
+                            <th class="p-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-800 text-sm">
+                        {% for emp in employees %}
+                        <tr class="emp-row hover:bg-slate-800/40 transition">
+                            <td class="p-4 font-semibold text-white emp-name">
+                                {{ emp.name }}
+                                <span class="block text-xs text-slate-400 font-normal">{{ emp.email }}</span>
+                            </td>
+                            <td class="p-4 font-mono text-slate-300 emp-cpf">{{ emp.cpf }}</td>
+                            <td class="p-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                                    {{ emp.department.name }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-slate-300 emp-pos">{{ emp.position.title }}</td>
+                            <td class="p-4 font-semibold text-emerald-400">R$ {{ emp.salary|floatformat:2 }}</td>
+                            <td class="p-4">
+                                {% if emp.status == 'Active' %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Ativo</span>
+                                {% elif emp.status == 'Vacation' %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Férias</span>
+                                {% else %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">Desligado</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="p-8 text-center text-slate-500">Nenhum funcionário encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if employees.has_other_pages %}
+            <div id="pagination" class="p-4 border-t border-slate-800 flex items-center justify-between text-sm text-slate-400 transition-colors duration-300">
+                <span>Página {{ employees.number }} de {{ employees.paginator.num_pages }}</span>
+                <div class="flex gap-2">
+                    {% if employees.has_previous %}
+                    <a href="?page={{ employees.previous_page_number }}&q={{ query }}&dept={{ dept_id }}" class="page-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium">Anterior</a>
+                    {% endif %}
+                    {% if employees.has_next %}
+                    <a href="?page={{ employees.next_page_number }}&q={{ query }}&dept={{ dept_id }}" class="page-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium">Próxima</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+    </main>
+
+    <script>
+        function setTheme(isLight) {
+            const body = document.getElementById('page-body');
+            const htmlRoot = document.getElementById('html-root');
+            const navbar = document.getElementById('navbar');
+            const backBtn = document.getElementById('back-btn');
+            const dashLink = document.getElementById('dash-link');
+            const navTitle = document.getElementById('nav-title');
+            const filterForm = document.getElementById('filter-form');
+            const tableCard = document.getElementById('table-card');
+            const tableHead = document.getElementById('table-head');
+            const pagination = document.getElementById('pagination');
+            const clearBtn = document.getElementById('clear-btn');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const themeBtn = document.getElementById('theme-btn');
+            const filterLabels = document.querySelectorAll('.filter-label');
+            const filterInputs = document.querySelectorAll('.filter-input');
+            const empNames = document.querySelectorAll('.emp-name');
+            const empCpfs = document.querySelectorAll('.emp-cpf');
+            const empPoss = document.querySelectorAll('.emp-pos');
+            const empRows = document.querySelectorAll('.emp-row');
+            const pageLinks = document.querySelectorAll('.page-link');
+
+            if (isLight) {
+                htmlRoot.className = "h-full bg-slate-100";
+                body.className = "h-full bg-slate-100 text-slate-900 font-sans flex flex-col transition-colors duration-300";
+                navbar.className = "bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 shadow-sm";
+                navTitle.className = "font-bold text-lg tracking-tight text-slate-900";
+                backBtn.className = "w-10 h-10 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition shadow-sm";
+                dashLink.className = "px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition shadow-sm";
+                
+                filterForm.className = "bg-white border border-slate-200 rounded-2xl p-6 shadow-md flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300";
+                tableCard.className = "bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden transition-colors duration-300";
+                tableHead.className = "border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600";
+                if (pagination) pagination.className = "p-4 border-t border-slate-200 flex items-center justify-between text-sm text-slate-600 transition-colors duration-300 bg-slate-50";
+                clearBtn.className = "px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-300 transition shadow-sm";
+
+                sunIcon.classList.remove('hidden');
+                sunIcon.classList.add('block');
+                moonIcon.classList.remove('block');
+                moonIcon.classList.add('hidden');
+                themeBtn.className = "p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center justify-center shadow-sm";
+
+                filterLabels.forEach(l => l.className = "filter-label block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2");
+                filterInputs.forEach(i => i.className = "filter-input w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500");
+                empNames.forEach(n => {
+                    n.className = "p-4 font-semibold text-slate-900 emp-name";
+                    const span = n.querySelector('span');
+                    if(span) span.className = "block text-xs text-slate-500 font-normal";
+                });
+                empCpfs.forEach(c => c.className = "p-4 font-mono text-slate-700 emp-cpf");
+                empPoss.forEach(p => p.className = "p-4 text-slate-700 emp-pos");
+                empRows.forEach(r => r.className = "emp-row hover:bg-slate-50 transition border-b border-slate-100 last:border-b-0");
+                pageLinks.forEach(l => l.className = "page-link px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium");
+
+                localStorage.setItem('burqa_theme', 'light');
+            } else {
+                htmlRoot.className = "h-full bg-slate-950";
+                body.className = "h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300";
+                navbar.className = "bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300";
+                navTitle.className = "font-bold text-lg tracking-tight text-white";
+                backBtn.className = "w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition";
+                dashLink.className = "px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition";
+
+                filterForm.className = "bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300";
+                tableCard.className = "bg-slate-900/60 border border-slate-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300";
+                tableHead.className = "border-b border-slate-800 bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-400";
+                if (pagination) pagination.className = "p-4 border-t border-slate-800 flex items-center justify-between text-sm text-slate-400 transition-colors duration-300";
+                clearBtn.className = "px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition";
+
+                sunIcon.classList.remove('block');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                moonIcon.classList.add('block');
+                themeBtn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center";
+
+                filterLabels.forEach(l => l.className = "filter-label block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2");
+                filterInputs.forEach(i => i.className = "filter-input w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500");
+                empNames.forEach(n => {
+                    n.className = "p-4 font-semibold text-white emp-name";
+                    const span = n.querySelector('span');
+                    if(span) span.className = "block text-xs text-slate-400 font-normal";
+                });
+                empCpfs.forEach(c => c.className = "p-4 font-mono text-slate-300 emp-cpf");
+                empPoss.forEach(p => p.className = "p-4 text-slate-300 emp-pos");
+                empRows.forEach(r => r.className = "emp-row hover:bg-slate-800/40 transition");
+                pageLinks.forEach(l => l.className = "page-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium");
+
+                localStorage.setItem('burqa_theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('burqa_theme');
+            setTheme(currentTheme !== 'light');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('burqa_theme') === 'light') {
+                setTheme(true);
+            }
+        });
+    </script>
+</body>
+</html>
