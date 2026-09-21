@@ -1,35 +1,229 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="h-full bg-slate-950" id="html-root">
+<html lang="pt-br" class="h-full dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Burqa - Dashboard RH</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script>
+        (function() {
+            const saved = localStorage.getItem('burqa_theme');
+            if (saved === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+            }
+        })();
+    </script>
+    <style>
+        /* ===== Theme Styles (Dark / Light) ===== */
+        html.dark body {
+            background: radial-gradient(circle at 50% -10%, #141c30 0%, #080c14 65%) fixed;
+            color: #f8fafc;
+        }
+        html.light body {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef1f6 100%) fixed;
+            color: #0f172a;
+        }
+
+        /* Navbar */
+        html.dark .nav-bar {
+            background: rgba(15, 23, 42, 0.75);
+            border-color: rgba(51, 65, 85, 0.7);
+        }
+        html.light .nav-bar {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: #e2e8f0;
+            box-shadow: 0 4px 16px -6px rgba(100, 116, 139, 0.18);
+        }
+        html.dark .nav-title { color: #ffffff; }
+        html.light .nav-title { color: #0f172a; }
+        html.dark .nav-sub-indigo { color: #818cf8; }
+        html.light .nav-sub-indigo { color: #4f46e5; }
+        html.dark .nav-sub-emerald { color: #34d399; }
+        html.light .nav-sub-emerald { color: #059669; }
+        html.dark .nav-sub-violet { color: #a78bfa; }
+        html.light .nav-sub-violet { color: #7c3aed; }
+
+        html.dark .icon-back {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(71, 85, 105, 0.6);
+            color: #cbd5e1;
+        }
+        html.dark .icon-back:hover { background: rgba(51, 65, 85, 0.9); color: #ffffff; }
+        html.light .icon-back {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+        html.light .icon-back:hover { background: #e2e8f0; color: #0f172a; }
+
+        html.dark .action-link {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(71, 85, 105, 0.6);
+            color: #e2e8f0;
+        }
+        html.dark .action-link:hover { background: rgba(51, 65, 85, 0.9); color: #ffffff; }
+        html.light .action-link {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+        html.light .action-link:hover { background: #f1f5f9; color: #0f172a; }
+
+        html.dark .logout-btn:hover {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fda4af;
+            border-color: rgba(251, 113, 133, 0.35);
+        }
+        html.light .logout-btn {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+        html.light .logout-btn:hover {
+            background: rgba(244, 63, 94, 0.08);
+            color: #e11d48;
+            border-color: rgba(225, 29, 72, 0.3);
+        }
+
+        /* Theme toggle (shared UI) */
+        html.dark .theme-btn {
+            background: rgba(30, 41, 59, 0.85);
+            border-color: rgba(71, 85, 105, 0.6);
+            color: #e2e8f0;
+        }
+        html.dark .theme-btn:hover { background: rgba(51, 65, 85, 0.95); color: #ffffff; }
+        html.light .theme-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #cbd5e1;
+            color: #334155;
+            box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+        }
+        html.light .theme-btn:hover { background: #ffffff; color: #0f172a; }
+
+        /* Banner */
+        html.dark .banner {
+            background: linear-gradient(90deg, rgba(49, 46, 129, 0.45), rgba(76, 29, 149, 0.35), rgba(15, 23, 42, 0.55));
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        html.light .banner {
+            background: linear-gradient(90deg, #eef2ff, #faf5ff, #f1f5f9);
+            border-color: #c7d2fe;
+            box-shadow: 0 12px 30px -14px rgba(99, 102, 241, 0.35);
+        }
+        html.dark .banner-title { color: #ffffff; }
+        html.light .banner-title { color: #0f172a; }
+        html.dark .banner-desc { color: #94a3b8; }
+        html.light .banner-desc { color: #475569; }
+
+        /* Cards */
+        html.dark .surface-card {
+            background: rgba(15, 23, 42, 0.62);
+            border-color: rgba(51, 65, 85, 0.75);
+            box-shadow: 0 18px 36px -16px rgba(0, 0, 0, 0.6);
+        }
+        html.light .surface-card {
+            background: #ffffff;
+            border-color: #e2e8f0;
+            box-shadow: 0 12px 28px -14px rgba(148, 163, 184, 0.4);
+        }
+        html.dark .card-label { color: #94a3b8; }
+        html.light .card-label { color: #64748b; }
+        html.dark .card-value { color: #ffffff; }
+        html.light .card-value { color: #0f172a; }
+        html.dark .card-note { color: #64748b; }
+        html.light .card-note { color: #94a3b8; }
+
+        html.dark .user-greet { color: #94a3b8; }
+        html.light .user-greet { color: #64748b; }
+        html.dark .user-name { color: #ffffff; }
+        html.light .user-name { color: #0f172a; }
+
+        /* Accent colors */
+        html.dark .accent-indigo { color: #818cf8; }
+        html.light .accent-indigo { color: #4f46e5; }
+        html.dark .accent-emerald { color: #34d399; }
+        html.light .accent-emerald { color: #059669; }
+        html.dark .accent-violet { color: #a78bfa; }
+        html.light .accent-violet { color: #7c3aed; }
+        html.dark .accent-amber { color: #fbbf24; }
+        html.light .accent-amber { color: #d97706; }
+        html.dark .accent-rose { color: #fb7185; }
+        html.light .accent-rose { color: #e11d48; }
+        html.dark .accent-sky { color: #38bdf8; }
+        html.light .accent-sky { color: #0284c7; }
+
+        /* Module cards */
+        html.dark .module-card { background: rgba(15, 23, 42, 0.8); border-color: rgba(51, 65, 85, 0.7); }
+        html.light .module-card { background: #ffffff; border-color: #e2e8f0; box-shadow: 0 12px 28px -14px rgba(148, 163, 184, 0.45); }
+        html.dark .module-icon {
+            background: rgba(79, 70, 229, 0.16);
+            border-color: rgba(129, 140, 248, 0.3);
+            color: #a5b4fc;
+        }
+        html.light .module-icon {
+            background: #eef2ff;
+            border-color: #c7d2fe;
+            color: #4f46e5;
+        }
+        html.dark .module-icon-emerald {
+            background: rgba(16, 185, 129, 0.14);
+            border-color: rgba(52, 211, 153, 0.28);
+            color: #6ee7b7;
+        }
+        html.light .module-icon-emerald {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #059669;
+        }
+        html.dark .module-icon-violet {
+            background: rgba(139, 92, 246, 0.16);
+            border-color: rgba(167, 139, 250, 0.3);
+            color: #c4b5fd;
+        }
+        html.light .module-icon-violet {
+            background: #f5f3ff;
+            border-color: #ddd6fe;
+            color: #7c3aed;
+        }
+        html.dark .module-title { color: #ffffff; }
+        html.light .module-title { color: #0f172a; }
+        html.dark .module-desc { color: #94a3b8; }
+        html.light .module-desc { color: #64748b; }
+
+        /* Footer */
+        html.dark .footer-bar { border-color: rgba(51, 65, 85, 0.6); color: #64748b; }
+        html.light .footer-bar { border-color: #e2e8f0; color: #94a3b8; }
+    </style>
 </head>
-<body id="page-body" class="h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300">
+<body class="h-full font-sans flex flex-col transition-colors duration-500 select-none">
 
     <!-- Top Navbar -->
-    <header id="navbar" class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300">
+    <header class="nav-bar border-b backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 text-white">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-violet-500 flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/30 text-white">
                 B
             </div>
             <div>
-                <span id="nav-title" class="font-bold text-lg tracking-tight text-white">Burqa RH</span>
-                <span class="text-xs text-indigo-400 block font-mono">Enterprise Budget & Headcount</span>
+                <span class="nav-title font-bold text-lg tracking-tight transition-colors duration-300">Burqa RH</span>
+                <span class="nav-sub-indigo text-xs block font-mono transition-colors duration-300">Enterprise Budget &amp; Headcount</span>
             </div>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 sm:gap-4">
             <!-- Theme Toggle Button -->
-            <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center" id="theme-btn" title="Alternar Tema">
-                <svg id="sun-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                <svg id="moon-icon" class="w-4 h-4 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            <button onclick="toggleTheme()" class="theme-btn group flex items-center gap-2.5 px-4 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-300 active:scale-95 font-semibold text-sm" title="Alternar entre Modo Claro e Escuro">
+                <svg class="theme-icon-moon w-5 h-5 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <svg class="theme-icon-sun w-5 h-5 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="theme-label text-xs font-semibold uppercase tracking-wider">Alternar</span>
             </button>
 
-            <span id="user-greeting" class="text-sm text-slate-300 hidden sm:inline">Olá, <strong class="text-white">{{ request.user.username|title }}</strong></span>
+            <span class="user-greet text-sm hidden sm:inline transition-colors duration-300">Olá, <strong class="user-name font-bold transition-colors duration-300">{{ request.user.username|title }}</strong></span>
             <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 border border-slate-700 hover:border-rose-500/30 transition duration-200">
+                <button type="submit" class="logout-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl border border-slate-700/60 transition-colors duration-200">
                     Sair
                 </button>
             </form>
@@ -40,95 +234,95 @@
     <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-8">
 
         <!-- Welcome Banner -->
-        <div id="welcome-banner" class="bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-slate-900/50 border border-indigo-500/20 rounded-3xl p-8 relative overflow-hidden shadow-2xl transition-colors duration-300">
+        <div class="banner border rounded-3xl p-8 relative overflow-hidden shadow-2xl transition-colors duration-300">
             <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <h1 id="banner-title" class="text-3xl font-extrabold tracking-tight text-white mb-2">Painel Orçamentário de RH</h1>
-            <p id="banner-desc" class="text-slate-300 max-w-2xl text-sm leading-relaxed">
+            <h1 class="banner-title text-3xl font-extrabold tracking-tight mb-2 transition-colors duration-300">Painel Orçamentário de RH</h1>
+            <p class="banner-desc max-w-2xl text-sm leading-relaxed transition-colors duration-300">
                 Gerencie o quadro de funcionários, controle o orçamento anual e simule cenários estratégicos de custos e expansão de equipe.
             </p>
         </div>
 
         <!-- Quick Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Total de Funcionários</p>
-                <p class="stat-val text-3xl font-extrabold text-white">{{ total_employees }}</p>
-                <span class="text-xs text-emerald-400 mt-2 inline-block font-medium">✓ Quadro ativo atualizado</span>
+            <div class="surface-card border rounded-2xl p-6 transition-colors duration-300">
+                <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1 transition-colors duration-300">Total de Funcionários</p>
+                <p class="card-value text-3xl font-extrabold transition-colors duration-300">{{ total_employees }}</p>
+                <span class="accent-emerald text-xs mt-2 inline-block font-medium transition-colors duration-300">&#10003; Quadro ativo atualizado</span>
             </div>
-            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Folha Salarial Mensal</p>
-                <p class="stat-val text-3xl font-extrabold text-white">R$ {{ total_salary|floatformat:2 }}</p>
-                <span class="stat-sub text-xs text-slate-400 mt-2 inline-block">Média R$ {{ avg_salary|floatformat:2 }}/colaborador</span>
+            <div class="surface-card border rounded-2xl p-6 transition-colors duration-300">
+                <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1 transition-colors duration-300">Folha Salarial Mensal</p>
+                <p class="card-value text-3xl font-extrabold transition-colors duration-300">R$ {{ total_salary|floatformat:2 }}</p>
+                <span class="card-note text-xs mt-2 inline-block transition-colors duration-300">Média R$ {{ avg_salary|floatformat:2 }}/colaborador</span>
             </div>
-            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Custo Total (c/ Encargos)</p>
-                <p class="text-3xl font-extrabold text-indigo-400">R$ {{ total_cost_monthly|floatformat:2 }}</p>
-                <span class="text-xs text-indigo-400 mt-2 inline-block">Inclui encargos e benefícios</span>
+            <div class="surface-card border rounded-2xl p-6 transition-colors duration-300">
+                <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1 transition-colors duration-300">Custo Total (c/ Encargos)</p>
+                <p class="accent-indigo text-3xl font-extrabold transition-colors duration-300">R$ {{ total_cost_monthly|floatformat:2 }}</p>
+                <span class="accent-indigo text-xs mt-2 inline-block transition-colors duration-300">Inclui encargos e benefícios</span>
             </div>
-            <div class="stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Orçamento Anual (Projetado)</p>
-                <p class="text-3xl font-extrabold text-emerald-400">R$ {{ annual_budget|floatformat:2 }}</p>
-                <span class="text-xs text-emerald-500 mt-2 inline-block">Base 12 meses + Despesas RH</span>
+            <div class="surface-card border rounded-2xl p-6 transition-colors duration-300">
+                <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1 transition-colors duration-300">Orçamento Anual (Projetado)</p>
+                <p class="accent-emerald text-3xl font-extrabold transition-colors duration-300">R$ {{ annual_budget|floatformat:2 }}</p>
+                <span class="accent-emerald text-xs mt-2 inline-block transition-colors duration-300">Base 12 meses + Despesas RH</span>
             </div>
         </div>
 
-        <!-- 3 Main Action Modules (Buttons requested by user) -->
+        <!-- 3 Main Action Modules -->
         <div>
-            <h2 id="modules-heading" class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <h2 class="card-value text-xl font-bold mb-6 flex items-center gap-2 transition-colors duration-300">
                 <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                 Módulos Principais
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Module 1: Funcionarios -->
-                <a href="{% url 'employees' %}" class="module-card group bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+                <a href="{% url 'employees' %}" class="module-card group border rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
                     <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-indigo-600/10 rounded-full blur-2xl group-hover:bg-indigo-600/20 transition duration-300"></div>
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
+                        <div class="module-icon w-14 h-14 rounded-2xl border flex items-center justify-center font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
                             1
                         </div>
-                        <h3 class="mod-title text-2xl font-bold text-white mb-2 group-hover:text-indigo-500 transition duration-200">Funcionários</h3>
-                        <p class="mod-desc text-slate-400 text-sm leading-relaxed mb-6">
+                        <h3 class="module-title text-2xl font-bold mb-2 group-hover:text-indigo-500 transition duration-200">Funcionários</h3>
+                        <p class="module-desc text-sm leading-relaxed mb-6 transition-colors duration-300">
                             Visualize, filtre e gerencie os {{ total_employees }} colaboradores, cargos, salários, status e departamentos da empresa.
                         </p>
                     </div>
-                    <div class="flex items-center gap-2 text-indigo-400 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
+                    <div class="accent-indigo flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
                         <span>Acessar Módulo</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </a>
 
                 <!-- Module 2: Orcamento -->
-                <a href="{% url 'budget' %}" class="module-card group bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+                <a href="{% url 'budget' %}" class="module-card group border rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
                     <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-emerald-600/10 rounded-full blur-2xl group-hover:bg-emerald-600/20 transition duration-300"></div>
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
+                        <div class="module-icon-emerald w-14 h-14 rounded-2xl border flex items-center justify-center font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
                             2
                         </div>
-                        <h3 class="mod-title text-2xl font-bold text-white mb-2 group-hover:text-emerald-500 transition duration-200">Orçamento</h3>
-                        <p class="mod-desc text-slate-400 text-sm leading-relaxed mb-6">
+                        <h3 class="module-title text-2xl font-bold mb-2 group-hover:text-emerald-500 transition duration-200">Orçamento</h3>
+                        <p class="module-desc text-sm leading-relaxed mb-6 transition-colors duration-300">
                             Acompanhe o orçamento detalhado de RH, despesas operacionais por departamento, encargos trabalhistas e custos mensais.
                         </p>
                     </div>
-                    <div class="flex items-center gap-2 text-emerald-400 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
+                    <div class="accent-emerald flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
                         <span>Acessar Módulo</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </a>
 
                 <!-- Module 3: Simulador de Cenarios -->
-                <a href="{% url 'simulator' %}" class="module-card group bg-slate-900/80 border border-slate-800 hover:border-violet-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+                <a href="{% url 'simulator' %}" class="module-card group border rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
                     <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-violet-600/10 rounded-full blur-2xl group-hover:bg-violet-600/20 transition duration-300"></div>
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
+                        <div class="module-icon-violet w-14 h-14 rounded-2xl border flex items-center justify-center font-bold text-2xl mb-6 group-hover:scale-110 transition duration-300">
                             3
                         </div>
-                        <h3 class="mod-title text-2xl font-bold text-white mb-2 group-hover:text-violet-500 transition duration-200">Simulador de Cenários</h3>
-                        <p class="mod-desc text-slate-400 text-sm leading-relaxed mb-6">
+                        <h3 class="module-title text-2xl font-bold mb-2 group-hover:text-violet-500 transition duration-200">Simulador de Cenários</h3>
+                        <p class="module-desc text-sm leading-relaxed mb-6 transition-colors duration-300">
                             Simule reajustes salariais, novas contratações em massa e desligamentos para analisar o impacto financeiro em tempo real.
                         </p>
                     </div>
-                    <div class="flex items-center gap-2 text-violet-400 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
+                    <div class="accent-violet flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition duration-200">
                         <span>Acessar Módulo</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
@@ -139,131 +333,43 @@
     </main>
 
     <!-- Footer -->
-    <footer id="footer" class="mt-auto border-t border-slate-900 py-6 text-center text-xs text-slate-500 transition-colors duration-300">
+    <footer class="footer-bar mt-auto border-t py-6 text-center text-xs transition-colors duration-300">
         Burqa RH &bull; Sistema de Gestão Orçamentária Corporativa
     </footer>
 
     <script>
-        function setTheme(isLight) {
-            const body = document.getElementById('page-body');
-            const htmlRoot = document.getElementById('html-root');
-            const navbar = document.getElementById('navbar');
-            const navTitle = document.getElementById('nav-title');
-            const userGreeting = document.getElementById('user-greeting');
-            const welcomeBanner = document.getElementById('welcome-banner');
-            const bannerTitle = document.getElementById('banner-title');
-            const bannerDesc = document.getElementById('banner-desc');
-            const modulesHeading = document.getElementById('modules-heading');
-            const footer = document.getElementById('footer');
-            const sunIcon = document.getElementById('sun-icon');
-            const moonIcon = document.getElementById('moon-icon');
-            const themeBtn = document.getElementById('theme-btn');
-            const statCards = document.querySelectorAll('.stat-card');
-            const moduleCards = document.querySelectorAll('.module-card');
-            const statVals = document.querySelectorAll('.stat-val');
-            const statSubs = document.querySelectorAll('.stat-sub');
-            const modTitles = document.querySelectorAll('.mod-title');
-            const modDescs = document.querySelectorAll('.mod-desc');
+        function updateThemeDisplay() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sun = document.querySelector('.theme-icon-sun');
+            const moon = document.querySelector('.theme-icon-moon');
+            const label = document.querySelector('.theme-label');
 
-            if (isLight) {
-                htmlRoot.className = "h-full bg-slate-100";
-                body.className = "h-full bg-slate-100 text-slate-900 font-sans flex flex-col transition-colors duration-300";
-                navbar.className = "bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 shadow-sm";
-                navTitle.className = "font-bold text-lg tracking-tight text-slate-900";
-                userGreeting.className = "text-sm text-slate-600 hidden sm:inline";
-                
-                welcomeBanner.className = "bg-gradient-to-r from-indigo-100 via-purple-50 to-slate-100 border border-indigo-200 rounded-3xl p-8 relative overflow-hidden shadow-lg transition-colors duration-300";
-                bannerTitle.className = "text-3xl font-extrabold tracking-tight text-slate-900 mb-2";
-                bannerDesc.className = "text-slate-600 max-w-2xl text-sm leading-relaxed";
-                modulesHeading.className = "text-xl font-bold text-slate-900 mb-6 flex items-center gap-2";
-                footer.className = "mt-auto border-t border-slate-200 py-6 text-center text-xs text-slate-500 transition-colors duration-300 bg-white";
-
-                sunIcon.classList.remove('hidden');
-                sunIcon.classList.add('block');
-                moonIcon.classList.remove('block');
-                moonIcon.classList.add('hidden');
-                themeBtn.className = "p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center justify-center shadow-sm";
-
-                statCards.forEach(c => {
-                    c.className = "stat-card bg-white border border-slate-200 rounded-2xl p-6 shadow-md transition-colors duration-300";
-                });
-                moduleCards.forEach(c => {
-                    c.className = "module-card group bg-white border border-slate-200 hover:border-indigo-400 rounded-3xl p-8 shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between";
-                });
-                statVals.forEach(v => {
-                    if(!v.classList.contains('text-indigo-400') && !v.classList.contains('text-emerald-400')) {
-                        v.className = "stat-val text-3xl font-extrabold text-slate-900";
-                    }
-                });
-                statSubs.forEach(s => {
-                    if(!s.classList.contains('text-emerald-400')) {
-                        s.className = "stat-sub text-xs text-slate-500 mt-2 inline-block";
-                    }
-                });
-                modTitles.forEach(t => {
-                    t.className = "mod-title text-2xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition duration-200";
-                });
-                modDescs.forEach(d => {
-                    d.className = "mod-desc text-slate-600 text-sm leading-relaxed mb-6";
-                });
-
-                localStorage.setItem('burqa_theme', 'light');
+            if (isDark) {
+                sun.classList.remove('hidden');
+                moon.classList.add('hidden');
+                label.textContent = 'Modo Claro';
             } else {
-                htmlRoot.className = "h-full bg-slate-950";
-                body.className = "h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300";
-                navbar.className = "bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300";
-                navTitle.className = "font-bold text-lg tracking-tight text-white";
-                userGreeting.className = "text-sm text-slate-300 hidden sm:inline";
-
-                welcomeBanner.className = "bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-slate-900/50 border border-indigo-500/20 rounded-3xl p-8 relative overflow-hidden shadow-2xl transition-colors duration-300";
-                bannerTitle.className = "text-3xl font-extrabold tracking-tight text-white mb-2";
-                bannerDesc.className = "text-slate-300 max-w-2xl text-sm leading-relaxed";
-                modulesHeading.className = "text-xl font-bold text-white mb-6 flex items-center gap-2";
-                footer.className = "mt-auto border-t border-slate-900 py-6 text-center text-xs text-slate-500 transition-colors duration-300";
-
-                sunIcon.classList.remove('block');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-                moonIcon.classList.add('block');
-                themeBtn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center";
-
-                statCards.forEach(c => {
-                    c.className = "stat-card bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg transition-colors duration-300";
-                });
-                moduleCards.forEach(c => {
-                    c.className = "module-card group bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-3xl p-8 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between";
-                });
-                statVals.forEach(v => {
-                    if(!v.classList.contains('text-indigo-400') && !v.classList.contains('text-emerald-400')) {
-                        v.className = "stat-val text-3xl font-extrabold text-white";
-                    }
-                });
-                statSubs.forEach(s => {
-                    if(!s.classList.contains('text-emerald-400')) {
-                        s.className = "stat-sub text-xs text-slate-400 mt-2 inline-block";
-                    }
-                });
-                modTitles.forEach(t => {
-                    t.className = "mod-title text-2xl font-bold text-white mb-2 group-hover:text-indigo-400 transition duration-200";
-                });
-                modDescs.forEach(d => {
-                    d.className = "mod-desc text-slate-400 text-sm leading-relaxed mb-6";
-                });
-
-                localStorage.setItem('burqa_theme', 'dark');
+                sun.classList.add('hidden');
+                moon.classList.remove('hidden');
+                label.textContent = 'Modo Escuro';
             }
         }
 
         function toggleTheme() {
-            const currentTheme = localStorage.getItem('burqa_theme');
-            setTheme(currentTheme !== 'light');
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                localStorage.setItem('burqa_theme', 'light');
+            } else {
+                document.documentElement.classList.remove('light');
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('burqa_theme', 'dark');
+            }
+            updateThemeDisplay();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('burqa_theme') === 'light') {
-                setTheme(true);
-            }
-        });
+        document.addEventListener('DOMContentLoaded', updateThemeDisplay);
     </script>
 </body>
 </html>

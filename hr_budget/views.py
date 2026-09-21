@@ -115,7 +115,9 @@ def simulator_view(request):
 
     simulated_headcount = base_headcount
     simulated_monthly_payroll = base_monthly_salary
+    simulated_monthly_total = base_monthly_total
     simulated_annual_cost = base_annual_cost
+    cost_diff = Decimal('0.00')
     
     salary_increase = 0.0
     new_hires = 0

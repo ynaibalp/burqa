@@ -1,31 +1,143 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="h-full bg-slate-950" id="html-root">
+<html lang="pt-br" class="h-full dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Burqa - Funcionários</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script>
+        (function() {
+            const saved = localStorage.getItem('burqa_theme');
+            if (saved === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+            }
+        })();
+    </script>
+    <style>
+        /* ===== Theme Styles (Dark / Light) ===== */
+        html.dark body {
+            background: radial-gradient(circle at 50% -10%, #141c30 0%, #080c14 65%) fixed;
+            color: #f8fafc;
+        }
+        html.light body {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef1f6 100%) fixed;
+            color: #0f172a;
+        }
+
+        html.dark .nav-bar { background: rgba(15, 23, 42, 0.75); border-color: rgba(51, 65, 85, 0.7); }
+        html.light .nav-bar { background: rgba(255, 255, 255, 0.85); border-color: #e2e8f0; box-shadow: 0 4px 16px -6px rgba(100, 116, 139, 0.18); }
+        html.dark .nav-title { color: #ffffff; }
+        html.light .nav-title { color: #0f172a; }
+        html.dark .nav-sub { color: #818cf8; }
+        html.light .nav-sub { color: #4f46e5; }
+
+        html.dark .icon-back { background: rgba(30, 41, 59, 0.9); border-color: rgba(71, 85, 105, 0.6); color: #cbd5e1; }
+        html.dark .icon-back:hover { background: rgba(51, 65, 85, 0.9); color: #ffffff; }
+        html.light .icon-back { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }
+        html.light .icon-back:hover { background: #e2e8f0; color: #0f172a; }
+
+        html.dark .action-link { background: rgba(30, 41, 59, 0.9); border-color: rgba(71, 85, 105, 0.6); color: #e2e8f0; }
+        html.dark .action-link:hover { background: rgba(51, 65, 85, 0.9); color: #ffffff; }
+        html.light .action-link { background: #ffffff; border-color: #cbd5e1; color: #475569; }
+        html.light .action-link:hover { background: #f1f5f9; color: #0f172a; }
+
+        html.dark .theme-btn { background: rgba(30, 41, 59, 0.85); border-color: rgba(71, 85, 105, 0.6); color: #e2e8f0; }
+        html.dark .theme-btn:hover { background: rgba(51, 65, 85, 0.95); color: #ffffff; }
+        html.light .theme-btn { background: rgba(255, 255, 255, 0.9); border-color: #cbd5e1; color: #334155; box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.06); }
+        html.light .theme-btn:hover { background: #ffffff; color: #0f172a; }
+
+        /* Filter card */
+        html.dark .filter-card { background: rgba(15, 23, 42, 0.62); border-color: rgba(51, 65, 85, 0.75); }
+        html.light .filter-card { background: #ffffff; border-color: #e2e8f0; box-shadow: 0 12px 28px -14px rgba(148, 163, 184, 0.4); }
+        html.dark .field-label { color: #94a3b8; }
+        html.light .field-label { color: #475569; }
+        html.dark .form-input { background: rgba(2, 6, 23, 0.65); border-color: rgba(51, 65, 85, 0.8); color: #ffffff; }
+        html.dark .form-input::placeholder { color: #64748b; }
+        html.dark .form-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        html.light .form-input { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+        html.light .form-input::placeholder { color: #94a3b8; }
+        html.light .form-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18); background: #ffffff; }
+
+        html.dark .btn-primary { background: #4f46e5; color: #ffffff; }
+        html.dark .btn-primary:hover { background: #4338ca; }
+        html.light .btn-primary { background: #4f46e5; color: #ffffff; }
+        html.light .btn-primary:hover { background: #4338ca; }
+
+        html.dark .btn-clear { background: rgba(30, 41, 59, 0.9); border-color: rgba(71, 85, 105, 0.6); color: #94a3b8; }
+        html.dark .btn-clear:hover { background: rgba(51, 65, 85, 0.9); color: #ffffff; }
+        html.light .btn-clear { background: #ffffff; border-color: #cbd5e1; color: #64748b; }
+        html.light .btn-clear:hover { background: #f1f5f9; color: #0f172a; }
+
+        /* Table */
+        html.dark .table-card { background: rgba(15, 23, 42, 0.62); border-color: rgba(51, 65, 85, 0.75); box-shadow: 0 18px 36px -16px rgba(0, 0, 0, 0.6); }
+        html.light .table-card { background: #ffffff; border-color: #e2e8f0; box-shadow: 0 12px 28px -14px rgba(148, 163, 184, 0.4); }
+        html.dark .table-head { background: rgba(2, 6, 23, 0.6); border-color: rgba(51, 65, 85, 0.8); color: #94a3b8; }
+        html.light .table-head { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+        html.dark .table-body { border-color: rgba(51, 65, 85, 0.7); }
+        html.light .table-body { border-color: #e2e8f0; }
+        html.dark .table-row { border-color: rgba(51, 65, 85, 0.55); }
+        html.dark .table-row:hover { background: rgba(30, 41, 59, 0.5); }
+        html.light .table-row { border-color: #f1f5f9; }
+        html.light .table-row:hover { background: #f8fafc; }
+
+        html.dark .tcell-strong { color: #ffffff; }
+        html.light .tcell-strong { color: #0f172a; }
+        html.dark .tcell-muted { color: #94a3b8; }
+        html.light .tcell-muted { color: #64748b; }
+        html.dark .tcell-mono { color: #cbd5e1; }
+        html.light .tcell-mono { color: #475569; }
+
+        /* Pills */
+        .pill { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.65rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; border: 1px solid; white-space: nowrap; }
+        html.dark .pill-indigo { background: rgba(99, 102, 241, 0.14); color: #a5b4fc; border-color: rgba(129, 140, 248, 0.3); }
+        html.light .pill-indigo { background: #eef2ff; color: #4f46e5; border-color: #c7d2fe; }
+        html.dark .pill-emerald { background: rgba(16, 185, 129, 0.12); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.3); }
+        html.light .pill-emerald { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        html.dark .pill-amber { background: rgba(245, 158, 11, 0.12); color: #fcd34d; border-color: rgba(251, 191, 36, 0.3); }
+        html.light .pill-amber { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+        html.dark .pill-rose { background: rgba(244, 63, 94, 0.12); color: #fda4af; border-color: rgba(251, 113, 133, 0.3); }
+        html.light .pill-rose { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+
+        /* Accent */
+        html.dark .accent-emerald { color: #34d399; }
+        html.light .accent-emerald { color: #047857; }
+
+        /* Pagination */
+        html.dark .pagination-bar { border-color: rgba(51, 65, 85, 0.7); color: #94a3b8; }
+        html.light .pagination-bar { border-color: #e2e8f0; color: #64748b; }
+        html.dark .page-link { background: rgba(30, 41, 59, 0.9); color: #ffffff; }
+        html.dark .page-link:hover { background: rgba(51, 65, 85, 0.95); }
+        html.light .page-link { background: #e2e8f0; color: #334155; }
+        html.light .page-link:hover { background: #cbd5e1; color: #0f172a; }
+
+        html.dark .empty-note { color: #64748b; }
+        html.light .empty-note { color: #94a3b8; }
+    </style>
 </head>
-<body id="page-body" class="h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300">
+<body class="h-full font-sans flex flex-col transition-colors duration-500 select-none">
 
     <!-- Top Navbar -->
-    <header id="navbar" class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300">
+    <header class="nav-bar border-b backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300">
         <div class="flex items-center gap-4">
-            <a href="{% url 'dashboard' %}" id="back-btn" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition">
+            <a href="{% url 'dashboard' %}" class="icon-back w-10 h-10 rounded-xl border flex items-center justify-center transition-colors duration-200">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             </a>
             <div>
-                <span id="nav-title" class="font-bold text-lg tracking-tight text-white">1. Módulo Funcionários</span>
-                <span class="text-xs text-indigo-400 block font-mono">Headcount Total: {{ employees.paginator.count }}</span>
+                <span class="nav-title font-bold text-lg tracking-tight transition-colors duration-300">1. Módulo Funcionários</span>
+                <span class="nav-sub text-xs block font-mono transition-colors duration-300">Headcount Total: {{ employees.paginator.count }}</span>
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <!-- Theme Toggle Button -->
-            <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center" id="theme-btn" title="Alternar Tema">
-                <svg id="sun-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                <svg id="moon-icon" class="w-4 h-4 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            <button onclick="toggleTheme()" class="theme-btn group flex items-center gap-2.5 px-4 py-2.5 rounded-xl border backdrop-blur-md transition-all duration-300 active:scale-95 font-semibold text-sm" title="Alternar entre Modo Claro e Escuro">
+                <svg class="theme-icon-moon w-5 h-5 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <svg class="theme-icon-sun w-5 h-5 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="theme-label text-xs font-semibold uppercase tracking-wider">Alternar</span>
             </button>
-            <a href="{% url 'dashboard' %}" id="dash-link" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+            <a href="{% url 'dashboard' %}" class="action-link px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl border transition-colors duration-200">
                 Voltar ao Dashboard
             </a>
         </div>
@@ -34,15 +146,15 @@
     <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 space-y-6">
 
         <!-- Search & Filters -->
-        <form method="get" id="filter-form" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300">
+        <form method="get" class="filter-card border rounded-2xl p-6 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300">
             <div class="w-full md:w-1/3">
-                <label class="filter-label block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Buscar Funcionário</label>
+                <label class="field-label block text-xs font-semibold uppercase tracking-wider mb-2 transition-colors duration-300">Buscar Funcionário</label>
                 <input type="text" name="q" value="{{ query }}" placeholder="Nome ou CPF..."
-                    class="filter-input w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    class="form-input w-full px-4 py-2.5 rounded-xl border text-sm transition-colors duration-200 focus:outline-none">
             </div>
             <div class="w-full md:w-1/4">
-                <label class="filter-label block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Departamento</label>
-                <select name="dept" class="filter-input w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500">
+                <label class="field-label block text-xs font-semibold uppercase tracking-wider mb-2 transition-colors duration-300">Departamento</label>
+                <select name="dept" class="form-input w-full px-4 py-2.5 rounded-xl border text-sm transition-colors duration-200 focus:outline-none">
                     <option value="">Todos os Departamentos</option>
                     {% for d in departments %}
                     <option value="{{ d.id }}" {% if dept_id == d.id|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>
@@ -50,21 +162,21 @@
                 </select>
             </div>
             <div class="w-full md:w-auto flex items-end gap-3 self-end">
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition">
+                <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl font-semibold shadow-lg shadow-indigo-600/30 transition-all duration-200 active:scale-95">
                     Filtrar
                 </button>
-                <a href="{% url 'employees' %}" id="clear-btn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition">
+                <a href="{% url 'employees' %}" class="btn-clear px-4 py-2.5 rounded-xl font-semibold border transition-colors duration-200">
                     Limpar
                 </a>
             </div>
         </form>
 
         <!-- Employees Table -->
-        <div id="table-card" class="bg-slate-900/60 border border-slate-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
+        <div class="table-card border rounded-2xl shadow-xl overflow-hidden transition-colors duration-300">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr id="table-head" class="border-b border-slate-800 bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        <tr class="table-head border-b text-xs font-semibold uppercase tracking-wider transition-colors duration-300">
                             <th class="p-4">Colaborador</th>
                             <th class="p-4">CPF</th>
                             <th class="p-4">Departamento</th>
@@ -73,34 +185,35 @@
                             <th class="p-4">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body" class="divide-y divide-slate-800 text-sm">
+                    <tbody class="table-body divide-y text-sm transition-colors duration-300">
                         {% for emp in employees %}
-                        <tr class="emp-row hover:bg-slate-800/40 transition">
-                            <td class="p-4 font-semibold text-white emp-name">
-                                {{ emp.name }}
-                                <span class="block text-xs text-slate-400 font-normal">{{ emp.email }}</span>
+                        <tr class="table-row border-b transition-colors duration-300">
+                            <td class="p-4 font-semibold">
+                                <span class="tcell-strong block transition-colors duration-300">{{ emp.name }}</span>
+                                <span class="tcell-muted block text-xs font-normal transition-colors duration-300">{{ emp.email }}</span>
                             </td>
-                            <td class="p-4 font-mono text-slate-300 emp-cpf">{{ emp.cpf }}</td>
+                            <td class="tcell-mono p-4 font-mono transition-colors duration-300">{{ emp.cpf }}</td>
                             <td class="p-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                                <span class="pill pill-indigo">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                                     {{ emp.department.name }}
                                 </span>
                             </td>
-                            <td class="p-4 text-slate-300 emp-pos">{{ emp.position.title }}</td>
-                            <td class="p-4 font-semibold text-emerald-400">R$ {{ emp.salary|floatformat:2 }}</td>
+                            <td class="tcell-muted p-4 transition-colors duration-300">{{ emp.position.title }}</td>
+                            <td class="accent-emerald p-4 font-semibold transition-colors duration-300">R$ {{ emp.salary|floatformat:2 }}</td>
                             <td class="p-4">
                                 {% if emp.status == 'Active' %}
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Ativo</span>
+                                <span class="pill pill-emerald">&#9679; Ativo</span>
                                 {% elif emp.status == 'Vacation' %}
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Férias</span>
+                                <span class="pill pill-amber">&#9679; Férias</span>
                                 {% else %}
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">Desligado</span>
+                                <span class="pill pill-rose">&#9679; Desligado</span>
                                 {% endif %}
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-slate-500">Nenhum funcionário encontrado.</td>
+                            <td colspan="6" class="empty-note p-8 text-center transition-colors duration-300">Nenhum funcionário encontrado.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -109,14 +222,14 @@
 
             <!-- Pagination -->
             {% if employees.has_other_pages %}
-            <div id="pagination" class="p-4 border-t border-slate-800 flex items-center justify-between text-sm text-slate-400 transition-colors duration-300">
+            <div class="pagination-bar p-4 border-t flex items-center justify-between text-sm transition-colors duration-300">
                 <span>Página {{ employees.number }} de {{ employees.paginator.num_pages }}</span>
                 <div class="flex gap-2">
                     {% if employees.has_previous %}
-                    <a href="?page={{ employees.previous_page_number }}&q={{ query }}&dept={{ dept_id }}" class="page-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium">Anterior</a>
+                    <a href="?page={{ employees.previous_page_number }}&q={{ query }}&dept={{ dept_id }}" class="page-link px-3 py-1.5 rounded-lg font-medium transition-colors duration-200">Anterior</a>
                     {% endif %}
                     {% if employees.has_next %}
-                    <a href="?page={{ employees.next_page_number }}&q={{ query }}&dept={{ dept_id }}" class="page-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium">Próxima</a>
+                    <a href="?page={{ employees.next_page_number }}&q={{ query }}&dept={{ dept_id }}" class="page-link px-3 py-1.5 rounded-lg font-medium transition-colors duration-200">Próxima</a>
                     {% endif %}
                 </div>
             </div>
@@ -126,108 +239,38 @@
     </main>
 
     <script>
-        function setTheme(isLight) {
-            const body = document.getElementById('page-body');
-            const htmlRoot = document.getElementById('html-root');
-            const navbar = document.getElementById('navbar');
-            const backBtn = document.getElementById('back-btn');
-            const dashLink = document.getElementById('dash-link');
-            const navTitle = document.getElementById('nav-title');
-            const filterForm = document.getElementById('filter-form');
-            const tableCard = document.getElementById('table-card');
-            const tableHead = document.getElementById('table-head');
-            const pagination = document.getElementById('pagination');
-            const clearBtn = document.getElementById('clear-btn');
-            const sunIcon = document.getElementById('sun-icon');
-            const moonIcon = document.getElementById('moon-icon');
-            const themeBtn = document.getElementById('theme-btn');
-            const filterLabels = document.querySelectorAll('.filter-label');
-            const filterInputs = document.querySelectorAll('.filter-input');
-            const empNames = document.querySelectorAll('.emp-name');
-            const empCpfs = document.querySelectorAll('.emp-cpf');
-            const empPoss = document.querySelectorAll('.emp-pos');
-            const empRows = document.querySelectorAll('.emp-row');
-            const pageLinks = document.querySelectorAll('.page-link');
+        function updateThemeDisplay() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sun = document.querySelector('.theme-icon-sun');
+            const moon = document.querySelector('.theme-icon-moon');
+            const label = document.querySelector('.theme-label');
 
-            if (isLight) {
-                htmlRoot.className = "h-full bg-slate-100";
-                body.className = "h-full bg-slate-100 text-slate-900 font-sans flex flex-col transition-colors duration-300";
-                navbar.className = "bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300 shadow-sm";
-                navTitle.className = "font-bold text-lg tracking-tight text-slate-900";
-                backBtn.className = "w-10 h-10 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition shadow-sm";
-                dashLink.className = "px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition shadow-sm";
-                
-                filterForm.className = "bg-white border border-slate-200 rounded-2xl p-6 shadow-md flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300";
-                tableCard.className = "bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden transition-colors duration-300";
-                tableHead.className = "border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600";
-                if (pagination) pagination.className = "p-4 border-t border-slate-200 flex items-center justify-between text-sm text-slate-600 transition-colors duration-300 bg-slate-50";
-                clearBtn.className = "px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-300 transition shadow-sm";
-
-                sunIcon.classList.remove('hidden');
-                sunIcon.classList.add('block');
-                moonIcon.classList.remove('block');
-                moonIcon.classList.add('hidden');
-                themeBtn.className = "p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center justify-center shadow-sm";
-
-                filterLabels.forEach(l => l.className = "filter-label block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2");
-                filterInputs.forEach(i => i.className = "filter-input w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500");
-                empNames.forEach(n => {
-                    n.className = "p-4 font-semibold text-slate-900 emp-name";
-                    const span = n.querySelector('span');
-                    if(span) span.className = "block text-xs text-slate-500 font-normal";
-                });
-                empCpfs.forEach(c => c.className = "p-4 font-mono text-slate-700 emp-cpf");
-                empPoss.forEach(p => p.className = "p-4 text-slate-700 emp-pos");
-                empRows.forEach(r => r.className = "emp-row hover:bg-slate-50 transition border-b border-slate-100 last:border-b-0");
-                pageLinks.forEach(l => l.className = "page-link px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium");
-
-                localStorage.setItem('burqa_theme', 'light');
+            if (isDark) {
+                sun.classList.remove('hidden');
+                moon.classList.add('hidden');
+                label.textContent = 'Modo Claro';
             } else {
-                htmlRoot.className = "h-full bg-slate-950";
-                body.className = "h-full bg-slate-950 text-slate-100 font-sans flex flex-col transition-colors duration-300";
-                navbar.className = "bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors duration-300";
-                navTitle.className = "font-bold text-lg tracking-tight text-white";
-                backBtn.className = "w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition";
-                dashLink.className = "px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition";
-
-                filterForm.className = "bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between transition-colors duration-300";
-                tableCard.className = "bg-slate-900/60 border border-slate-800 rounded-2xl shadow-xl overflow-hidden transition-colors duration-300";
-                tableHead.className = "border-b border-slate-800 bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-400";
-                if (pagination) pagination.className = "p-4 border-t border-slate-800 flex items-center justify-between text-sm text-slate-400 transition-colors duration-300";
-                clearBtn.className = "px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition";
-
-                sunIcon.classList.remove('block');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-                moonIcon.classList.add('block');
-                themeBtn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center";
-
-                filterLabels.forEach(l => l.className = "filter-label block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2");
-                filterInputs.forEach(i => i.className = "filter-input w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500");
-                empNames.forEach(n => {
-                    n.className = "p-4 font-semibold text-white emp-name";
-                    const span = n.querySelector('span');
-                    if(span) span.className = "block text-xs text-slate-400 font-normal";
-                });
-                empCpfs.forEach(c => c.className = "p-4 font-mono text-slate-300 emp-cpf");
-                empPoss.forEach(p => p.className = "p-4 text-slate-300 emp-pos");
-                empRows.forEach(r => r.className = "emp-row hover:bg-slate-800/40 transition");
-                pageLinks.forEach(l => l.className = "page-link px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium");
-
-                localStorage.setItem('burqa_theme', 'dark');
+                sun.classList.add('hidden');
+                moon.classList.remove('hidden');
+                label.textContent = 'Modo Escuro';
             }
         }
 
         function toggleTheme() {
-            const currentTheme = localStorage.getItem('burqa_theme');
-            setTheme(currentTheme !== 'light');
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                localStorage.setItem('burqa_theme', 'light');
+            } else {
+                document.documentElement.classList.remove('light');
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('burqa_theme', 'dark');
+            }
+            updateThemeDisplay();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('burqa_theme') === 'light') {
-                setTheme(true);
-            }
-        });
+        document.addEventListener('DOMContentLoaded', updateThemeDisplay);
     </script>
 </body>
 </html>

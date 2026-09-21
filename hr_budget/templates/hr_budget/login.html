@@ -1,188 +1,312 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="h-full">
+<html lang="pt-br" class="h-full dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Burqa - Login RH</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script>
+        (function() {
+            const saved = localStorage.getItem('burqa_theme');
+            if (saved === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+            }
+        })();
+    </script>
     <style>
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Aura animation keyframes */
+        @keyframes auraIntroContract {
+            0% {
+                transform: scale(2.2);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.75;
+            }
         }
-        @keyframes auroraPulse {
-            0% { transform: translate(0px, 0px) scale(1); opacity: 0.4; }
-            33% { transform: translate(30px, -40px) scale(1.2); opacity: 0.7; }
-            66% { transform: translate(-20px, 30px) scale(0.9); opacity: 0.5; }
-            100% { transform: translate(0px, 0px) scale(1); opacity: 0.4; }
+        @keyframes auraSpinClockwise {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        .animated-bg {
-            background: linear-gradient(-45deg, #090d16, #111827, #1e1b4b, #312e81);
-            background-size: 400% 400%;
-            animation: gradientMove 18s ease infinite;
+        @keyframes auraSpinCounter {
+            0% {
+                transform: rotate(360deg);
+            }
+            100% {
+                transform: rotate(0deg);
+            }
         }
-        .light-animated-bg {
-            background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #ede9fe, #e0e7ff);
-            background-size: 400% 400%;
-            animation: gradientMove 18s ease infinite;
+        @keyframes auraPulseSlow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.12);
+            }
         }
-        .aurora-orb {
+        @keyframes subtleFloating {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Container that contracts on load and gently breathes */
+        .aura-master-wrapper {
             position: absolute;
-            width: 320px;
-            height: 320px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.45) 0%, rgba(168, 85, 247, 0.35) 50%, rgba(59, 130, 246, 0) 70%);
-            border-radius: 50%;
-            filter: blur(40px);
-            animation: auroraPulse 10s ease-in-out infinite;
-            z-index: 0;
+            width: 580px;
+            height: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: auraIntroContract 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             pointer-events: none;
+            z-index: 1;
         }
-        .light-aurora-orb {
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.2) 50%, rgba(59, 130, 246, 0) 70%);
+
+        .aura-breathing-layer {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: auraPulseSlow 7s ease-in-out infinite 1.6s;
         }
-        .glass {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+
+        /* The spinning dual-color circle inspired by auras: Cyan / Ocean Blue & Violet / Ethereal Magenta */
+        .aura-orb-primary {
+            position: absolute;
+            width: 540px;
+            height: 540px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #06b6d4 0%, #8b5cf6 50%, #06b6d4 100%);
+            filter: blur(55px);
+            animation: auraSpinClockwise 9s linear infinite;
+        }
+
+        .aura-orb-secondary {
+            position: absolute;
+            width: 440px;
+            height: 440px;
+            border-radius: 50%;
+            background: conic-gradient(from 180deg, #a855f7 0%, #38bdf8 50%, #a855f7 100%);
+            filter: blur(40px);
+            opacity: 0.85;
+            animation: auraSpinCounter 13s linear infinite;
+        }
+
+        /* Modal floating effect */
+        .login-box-float {
+            animation: subtleFloating 6s ease-in-out infinite;
+        }
+
+        /* Theme Styles */
+        html.dark body {
+            background: radial-gradient(circle at 50% 50%, #111827 0%, #080c14 100%);
+            color: #f8fafc;
+        }
+        html.dark .login-card-glass {
+            background: rgba(15, 23, 42, 0.78);
             border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(99, 102, 241, 0.2);
         }
-        .light-glass {
+        html.dark .input-styled {
+            background: rgba(2, 6, 23, 0.65);
+            border-color: rgba(51, 65, 85, 0.8);
+            color: #ffffff;
+        }
+        html.dark .input-styled::placeholder {
+            color: #64748b;
+        }
+        html.dark .text-title {
+            color: #ffffff;
+        }
+        html.dark .text-subtitle {
+            color: #94a3b8;
+        }
+        html.dark .theme-toggle-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(71, 85, 105, 0.6);
+            color: #e2e8f0;
+        }
+        html.dark .theme-toggle-btn:hover {
+            background: rgba(51, 65, 85, 0.9);
+            color: #ffffff;
+        }
+
+        html.light body {
+            background: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 100%);
+            color: #0f172a;
+        }
+        html.light .login-card-glass {
             background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.15), 0 10px 25px rgba(0, 0, 0, 0.06);
+        }
+        html.light .input-styled {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+        html.light .input-styled::placeholder {
+            color: #94a3b8;
+        }
+        html.light .text-title {
+            color: #0f172a;
+        }
+        html.light .text-subtitle {
+            color: #475569;
+        }
+        html.light .aura-orb-primary {
+            opacity: 0.55;
+            filter: blur(65px);
+        }
+        html.light .aura-orb-secondary {
+            opacity: 0.45;
+            filter: blur(50px);
+        }
+        html.light .theme-toggle-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #cbd5e1;
+            color: #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        html.light .theme-toggle-btn:hover {
+            background: #ffffff;
+            color: #0f172a;
         }
     </style>
 </head>
-<body id="page-body" class="h-full animated-bg flex items-center justify-center p-6 text-slate-100 font-sans relative overflow-hidden transition-colors duration-300">
+<body class="h-full flex items-center justify-center p-6 font-sans relative overflow-hidden transition-colors duration-500 select-none">
     
-    <!-- Theme Toggle Button -->
-    <button onclick="toggleTheme()" class="absolute top-6 right-6 z-50 p-3 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-lg transition flex items-center justify-center" id="theme-btn" title="Alternar Tema">
-        <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-        <svg id="moon-icon" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-    </button>
+    <!-- Top-Right Theme Toggle Button -->
+    <div class="absolute top-6 right-6 z-50">
+        <button onclick="toggleTheme()" id="theme-toggle" class="theme-toggle-btn group flex items-center gap-2.5 px-4 py-2.5 rounded-full border backdrop-blur-md transition-all duration-300 active:scale-95 shadow-lg" title="Alternar entre Modo Claro e Escuro">
+            <!-- Moon icon (shows in light mode to switch to dark) -->
+            <svg class="theme-moon-icon w-5 h-5 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <!-- Sun icon (shows in dark mode to switch to light) -->
+            <svg class="theme-sun-icon w-5 h-5 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <span class="theme-btn-label text-xs font-semibold uppercase tracking-wider">Alternar</span>
+        </button>
+    </div>
 
-    <!-- Central Aurora Glowing Orb behind the login modal -->
-    <div id="aurora-orb" class="aurora-orb"></div>
+    <!-- Dual-color Rotating Aura Circle (Starts wide, contracts and continuously spins behind modal) -->
+    <div class="aura-master-wrapper">
+        <div class="aura-breathing-layer">
+            <!-- Primary Aura Layer (Cyan to Violet rotating clockwise) -->
+            <div class="aura-orb-primary"></div>
+            <!-- Secondary Aura Layer (Magenta to Sky Blue rotating counter-clockwise) -->
+            <div class="aura-orb-secondary"></div>
+        </div>
+    </div>
 
-    <div id="login-card" class="w-full max-w-md glass rounded-3xl shadow-2xl p-8 border border-slate-700/50 relative z-10 overflow-hidden transition-all duration-300">
-        <!-- Additional glowing blur accents -->
-        <div class="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-violet-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
+    <!-- Login Modal Box (In front of the Aura) -->
+    <div class="login-box-float w-full max-w-md login-card-glass rounded-3xl p-8 backdrop-blur-2xl relative z-10 transition-all duration-500">
+        
+        <!-- Logo and Title -->
         <div class="text-center mb-8 relative z-10">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white font-bold text-2xl shadow-lg shadow-indigo-500/40 mb-4 ring-2 ring-indigo-400/30">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 text-white font-black text-2xl shadow-xl shadow-indigo-500/40 mb-4 ring-2 ring-white/20">
                 B
             </div>
-            <h1 id="title-text" class="text-3xl font-extrabold tracking-tight text-white">Burqa RH</h1>
-            <p id="subtitle-text" class="text-sm text-slate-400 mt-1">Sistema Orçamentário e Headcount</p>
+            <h1 class="text-title text-3xl font-extrabold tracking-tight transition-colors duration-300">Burqa RH</h1>
+            <p class="text-subtitle text-sm mt-1 transition-colors duration-300">Sistema Orçamentário e Headcount</p>
         </div>
 
         {% if form.errors %}
-        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center gap-3 relative z-10">
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            <span>Usuário ou senha incorretos. Tente novamente.</span>
+        <div class="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm flex items-center gap-3">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <span class="font-medium">Usuário ou senha incorretos. Tente novamente.</span>
         </div>
         {% endif %}
 
-        <form method="post" class="space-y-6 relative z-10">
+        <form method="post" class="space-y-5 relative z-10">
             {% csrf_token %}
             <div>
-                <label id="label-user" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Usuário</label>
-                <input type="text" name="username" required autofocus
-                    class="input-field w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition duration-200"
-                    placeholder="Digite seu usuário (ex: admin)">
+                <label class="text-subtitle block text-xs font-semibold uppercase tracking-wider mb-2">Usuário</label>
+                <div class="relative">
+                    <input type="text" name="username" required autofocus
+                        class="input-styled w-full px-4 py-3.5 rounded-2xl border text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all duration-200"
+                        placeholder="Ex: admin">
+                </div>
             </div>
 
             <div>
-                <label id="label-pass" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Senha</label>
-                <input type="password" name="password" required
-                    class="input-field w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition duration-200"
-                    placeholder="••••••••">
+                <label class="text-subtitle block text-xs font-semibold uppercase tracking-wider mb-2">Senha</label>
+                <div class="relative">
+                    <input type="password" name="password" required
+                        class="input-styled w-full px-4 py-3.5 rounded-2xl border text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500 transition-all duration-200"
+                        placeholder="••••••••">
+                </div>
             </div>
 
             <button type="submit"
-                class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold shadow-lg shadow-indigo-600/40 hover:shadow-indigo-600/60 active:scale-[0.99] transition duration-200">
+                class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 active:scale-[0.98] transition-all duration-300">
                 Acessar Sistema
             </button>
         </form>
 
-        <div class="mt-8 pt-6 border-t border-slate-700/40 text-center relative z-10">
-            <p id="footer-text" class="text-xs text-slate-500">Credenciais padrão para teste: <span class="text-indigo-400 font-mono font-medium">admin</span> / <span class="text-indigo-400 font-mono font-medium">admin123</span></p>
+        <div class="mt-8 pt-6 border-t border-slate-700/20 text-center relative z-10">
+            <p class="text-subtitle text-xs">
+                Credenciais padrão: <span class="font-mono font-bold text-indigo-500 dark:text-cyan-400">admin</span> / <span class="font-mono font-bold text-indigo-500 dark:text-cyan-400">admin123</span>
+            </p>
         </div>
     </div>
 
+    <!-- Script for Theme Toggle -->
     <script>
-        function setTheme(isLight) {
-            const body = document.getElementById('page-body');
-            const card = document.getElementById('login-card');
-            const orb = document.getElementById('aurora-orb');
-            const sunIcon = document.getElementById('sun-icon');
-            const moonIcon = document.getElementById('moon-icon');
-            const themeBtn = document.getElementById('theme-btn');
-            const titleText = document.getElementById('title-text');
-            const subtitleText = document.getElementById('subtitle-text');
-            const labelUser = document.getElementById('label-user');
-            const labelPass = document.getElementById('label-pass');
-            const footerText = document.getElementById('footer-text');
-            const inputs = document.querySelectorAll('.input-field');
+        function updateThemeDisplay() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sunIcon = document.querySelector('.theme-sun-icon');
+            const moonIcon = document.querySelector('.theme-moon-icon');
+            const label = document.querySelector('.theme-btn-label');
 
-            if (isLight) {
-                body.className = body.className.replace('animated-bg text-slate-100', 'light-animated-bg text-slate-900');
-                card.className = card.className.replace('glass border-slate-700/50', 'light-glass border-slate-200');
-                orb.classList.add('light-aurora-orb');
+            if (isDark) {
                 sunIcon.classList.remove('hidden');
-                sunIcon.classList.add('block');
-                moonIcon.classList.remove('block');
                 moonIcon.classList.add('hidden');
-                themeBtn.className = "absolute top-6 right-6 z-50 p-3 rounded-full bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-lg transition flex items-center justify-center";
-                
-                titleText.className = titleText.className.replace('text-white', 'text-slate-900');
-                subtitleText.className = subtitleText.className.replace('text-slate-400', 'text-slate-600');
-                labelUser.className = labelUser.className.replace('text-slate-400', 'text-slate-700');
-                labelPass.className = labelPass.className.replace('text-slate-400', 'text-slate-700');
-                footerText.className = footerText.className.replace('text-slate-500', 'text-slate-600');
-
-                inputs.forEach(inp => {
-                    inp.className = inp.className.replace('bg-slate-900/60 border-slate-700/80 text-white placeholder-slate-500', 'bg-white/80 border-slate-300 text-slate-900 placeholder-slate-400');
-                });
-                localStorage.setItem('burqa_theme', 'light');
+                label.textContent = 'Modo Claro';
             } else {
-                body.className = body.className.replace('light-animated-bg text-slate-900', 'animated-bg text-slate-100');
-                card.className = card.className.replace('light-glass border-slate-200', 'glass border-slate-700/50');
-                orb.classList.remove('light-aurora-orb');
-                sunIcon.classList.remove('block');
                 sunIcon.classList.add('hidden');
                 moonIcon.classList.remove('hidden');
-                moonIcon.classList.add('block');
-                themeBtn.className = "absolute top-6 right-6 z-50 p-3 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-lg transition flex items-center justify-center";
-
-                titleText.className = titleText.className.replace('text-slate-900', 'text-white');
-                subtitleText.className = subtitleText.className.replace('text-slate-600', 'text-slate-400');
-                labelUser.className = labelUser.className.replace('text-slate-700', 'text-slate-400');
-                labelPass.className = labelPass.className.replace('text-slate-700', 'text-slate-400');
-                footerText.className = footerText.className.replace('text-slate-600', 'text-slate-500');
-
-                inputs.forEach(inp => {
-                    inp.className = inp.className.replace('bg-white/80 border-slate-300 text-slate-900 placeholder-slate-400', 'bg-slate-900/60 border-slate-700/80 text-white placeholder-slate-500');
-                });
-                localStorage.setItem('burqa_theme', 'dark');
+                label.textContent = 'Modo Escuro';
             }
         }
 
         function toggleTheme() {
-            const currentTheme = localStorage.getItem('burqa_theme');
-            setTheme(currentTheme !== 'light');
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                localStorage.setItem('burqa_theme', 'light');
+            } else {
+                document.documentElement.classList.remove('light');
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('burqa_theme', 'dark');
+            }
+            updateThemeDisplay();
         }
 
-        // Initialize theme on load
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('burqa_theme') === 'light') {
-                setTheme(true);
-            }
-        });
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', updateThemeDisplay);
     </script>
 </body>
 </html>
