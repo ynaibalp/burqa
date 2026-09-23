@@ -161,6 +161,19 @@ html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
 
 <!-- ==================== DASHBOARD ==================== -->
 <section id="view-dashboard" class="hidden flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 flex flex-col gap-8">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-violet-500 flex items-center justify-center font-bold text-lg shadow-md text-white">B</div>
+            <div>
+                <span class="twhite font-bold text-base tracking-tight">Burqa RH</span>
+                <span class="tmuted text-xs block font-mono">Demo Executiva</span>
+            </div>
+        </div>
+        <button onclick="doLogout()" class="theme-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl border transition-all duration-200 hover:opacity-90">
+            Sair
+        </button>
+    </div>
+
     <div class="surface-card banner-area border rounded-3xl p-8 md:p-10 relative overflow-hidden">
         <div class="relative z-10">
             <span class="pill-indigo pill px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border">Demo Estática</span>
@@ -578,6 +591,7 @@ function doLogin(e) {
     var u = e.target.username.value.trim(), p = e.target.password.value;
     if (u === 'admin' && p === 'admin123') {
         STATE.logged = true; STATE.username = u;
+        localStorage.setItem('burqa_session', u);
         goView('dashboard');
     } else {
         var er = document.getElementById('login-error');
@@ -586,6 +600,7 @@ function doLogin(e) {
 }
 function doLogout() {
     STATE.logged = false;
+    localStorage.removeItem('burqa_session');
     location.hash = '';
     goView('login');
 }
@@ -879,10 +894,10 @@ function updateSim() {
     var custB = curBase * (1 + enc / 100);      /* custo atual c/ encargos */
 
     var newBase = curBase * (1 + rea / 100) + hir * sal;
-    var custN = newBase * (1 + enc / 100�);
+    var custN = newBase * (1 + enc / 100);
 
     STATE.sim.rea = rea; STATE.sim.hir = hir; STATE.sim.sal = sal; STATE.sim.enc = enc;
-    STATE.sim.base = custBFernando;
+    STATE.sim.base = custB;
     STATE.sim.newBase = newBase;
 
     if (e1) { var out = document.getElementById('sim-rea-out'); if (out) out.textContent = '+' + rea + '%'; }
@@ -893,7 +908,7 @@ function updateSim() {
     renderSimDetail(rea, hir, sal);
 }
 function renderResult(nb, cb, cn) {
-    var an = msg ? an : 'sim-annual';
+    var an = 'sim-annual';
     document.getElementById('sim-annual').textContent = fmtCur(cn * 12);
 
     var curAnn = document.getElementById('sim-cur-annual');
@@ -979,6 +994,15 @@ function renderDashboard() {
     setText('kpi-cost', fmtCur(folhaTotal));
     setText('kpi-annual', fmtCur(anual));
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var sess = localStorage.getItem('burqa_session');
+    if (sess) {
+        STATE.logged = true;
+        STATE.username = sess;
+    }
+    init();
+});
 </script>
 </body>
 </html>
