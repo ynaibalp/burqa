@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burqa RH — Demo Estática (GitHub Pages)</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script>
+(function(){
+  var t = localStorage.getItem('burqa_theme');
+  var h = document.documentElement;
+  if (t === 'light') { h.classList.add('light'); h.classList.remove('dark'); }
+  else { h.classList.add('dark'); h.classList.remove('light'); }
+})();
+</script>
+<style>
+/* ===== Fundos / Temas ===== */
+html.dark body { background: radial-gradient(circle at 50% -10%, #141c30 0%, #080c14 65%) fixed; color: #f8fafc; }
+html.light body { background: linear-gradient(180deg, #f8fafc 0%, #eef1f6 100%) fixed; color: #0f172a; }
+
+/* ===== Aura (orb rotativo de duas cores + contração) ===== */
+.aura-wrap { position: absolute; width: 560px; height: 560px; z-index: 1; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  animation: auraBreath 9s ease-in-out infinite; }
+.aura-intro { animation: auraIntro 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+html.dark .orb-a { position: absolute; inset: 13%; border-radius: 9999px;
+  background: conic-gradient(from 40deg, #06b6d4, #8b5cf6, #d946ef, #06b6d4);
+  filter: blur(46px); opacity: 0.7; animation: auraSpinCW 13s linear infinite; }
+html.dark .orb-b { position: absolute; inset: 26%; border-radius: 9999px;
+  background: conic-gradient(from 220deg, #a78bfa, #38bdf8, #f472b6, #a78bfa);
+  filter: blur(36px); opacity: 0.9; animation: auraSpinCCW 17s linear infinite; }
+html.light .orb-a { position: absolute; inset: 13%; border-radius: 9999px;
+  background: conic-gradient(from 40deg, #67e8f9, #a5b4fc, #f9a8d4, #67e8f9);
+  filter: blur(44px); opacity: 0.55; animation: auraSpinCW 13s linear infinite; }
+html.light .orb-b { position: absolute; inset: 26%; border-radius: 9999px;
+  background: conic-gradient(from 220deg, #c4b5fd, #7dd3fc, #f9a8d4, #c4b5fd);
+  filter: blur(34px); opacity: 0.8; animation: auraSpinCCW 17s linear infinite; }
+@keyframes auraSpinCW   { to { transform: rotate(360deg); } }
+@keyframes auraSpinCCW  { to { transform: rotate(-360deg); } }
+@keyframes auraBreath   { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes auraIntro    { 0% { transform: scale(2.1); opacity: 0; } 60% { opacity: .85; } 100% { transform: scale(1); opacity: 1; } }
+
+/* ===== Superfícies de vidro / texto ===== */
+html.dark .glass-card { background: rgba(15,23,42,0.78); border-color: rgba(148,163,184,0.18); box-shadow: 0 28px 60px -12px rgba(0,0,0,0.8), 0 0 42px rgba(139,92,246,0.3); }
+html.light .glass-card { background: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.9); box-shadow: 0 25px 50px -12px rgba(51,65,85,0.25), 0 0 30px rgba(139,92,246,0.16); }
+html.dark  .twhite{ color:#fff; }  html.light .twhite{ color:#0f172a; }
+html.dark  .tmuted{ color:#94a3b8; } html.light .tmuted{ color:#64748b; }
+html.dark  .tlabel{ color:#94a3b8; } html.light .tlabel{ color:#475569; }
+html.dark  .tcell-strong{ color:#fff; }   html.light .tcell-strong{ color:#0f172a; }
+html.dark  .tcell-muted{ color:#94a3b8; }  html.light .tcell-muted{ color:#64748b; }
+html.dark  .tcell-mono{ color:#cbd5e1; }   html.light .tcell-mono{ color:#475569; }
+
+/* ===== Cores de destaque ===== */
+html.dark .accent-indigo{ color:#818cf8; }  html.light .accent-indigo{ color:#4f46e5; }
+html.dark .accent-emerald{ color:#34d399; } html.light .accent-emerald{ color:#059669; }
+html.dark .accent-violet{ color:#a78bfa; }  html.light .accent-violet{ color:#7c3aed; }
+html.dark .accent-amber{ color:#fbbf24; }   html.light .accent-amber{ color:#b45309; }
+html.dark .accent-rose{ color:#fb7185; }    html.light .accent-rose{ color:#e11d48; }
+
+/* ===== Inputs ===== */
+html.dark .form-input { background: rgba(2,6,23,0.6); border-color: rgba(51,65,85,0.8); color:#fff; }
+html.dark .form-input::placeholder { color: #475569; }
+html.dark .form-input:focus { border-color:#6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.18); }
+html.light .form-input { background:#fff; border-color:#cbd5e1; color:#0f172a; }
+html.light .form-input::placeholder { color:#94a3b8; }
+html.light .form-input:focus { border-color:#6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.14); }
+
+/* ===== Botões / Nav / Tabela ===== */
+html.dark .theme-btn { background: rgba(30,41,59,0.85); border-color: rgba(71,85,105,0.6); color:#e2e8f0; }
+html.dark .theme-btn:hover { background: rgba(51,65,85,0.95); color:#fff; }
+html.light .theme-btn { background: rgba(255,255,255,0.9); border-color:#cbd5e1; color:#475569; }
+html.light .theme-btn:hover { background:#fff; color:#0f172a; }
+html.dark .nav-bar { background: rgba(15,23,42,0.78); border-color: rgba(51,65,85,0.7); }
+html.light .nav-bar { background: rgba(255,255,255,0.85); border-color:#e2e8f0; }
+html.dark .nav-title { color:#fff; }   html.light .nav-title{ color:#0f172a; }
+html.dark .nav-sub { color:#94a3b8; }   html.light .nav-sub { color:#64748b; }
+html.dark .surface-card { background: rgba(15,23,42,0.6); border-color: rgba(51,65,85,0.75); }
+html.light .surface-card { background:#fff; border-color:#e2e8f0; }
+html.dark .card-label { color:#94a3b8; } html.light .card-label { color:#64748b; }
+html.dark .card-note { color:#64748b; }  html.light .card-note { color:#94a3b8; }
+html.dark .footer-bar { border-color: rgba(51,65,85,0.6); color:#64748b; }
+html.light .footer-bar { border-color:#e2e8f0; color:#94a3b8; }
+html.dark .tbody-divide { border-color: rgba(51,65,85,0.5); }
+html.light .tbody-divide { border-color:#f1f5f9; }
+
+/* ===== Pills de status ===== */
+html.dark .pill-emerald{ background:rgba(16,185,129,0.12); color:#6ee7b7; border-color:rgba(52,211,153,0.3); }
+html.light .pill-emerald{ background:#ecfdf5; color:#059669; border-color:#a7f3d0; }
+html.dark .pill-amber{ background:rgba(245,158,11,0.12); color:#fcd34d; border-color:rgba(251,191,36,0.3); }
+html.light .pill-amber{ background:#fffbeb; color:#b45309; border-color:#fde68a; }
+html.dark .pill-rose{ background:rgba(244,63,94,0.12); color:#fda4af; border-color:rgba(251,113,133,0.3); }
+html.light .pill-rose{ background:#fff1f2; color:#be123c; border-color:#fecdd3; }
+html.dark .pill-indigo{ background:rgba(99,102,241,0.14); color:#a5b4fc; border-color:rgba(129,140,248,0.3); }
+html.light .pill-indigo{ background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; }
+
+/* ===== Cartões de módulo (dashboard) ===== */
+html.dark .mod-card { background: rgba(15,23,42,0.65); border-color: rgba(51,65,85,0.8);
+  box-shadow: 0 20px 45px -15px rgba(0,0,0,0.75), 0 0 32px rgba(99,102,241,0.16); }
+html.light .mod-card { background:#fff; border-color:#e2e8f0;
+  box-shadow: 0 18px 40px -16px rgba(51,65,85,0.3); }
+html.dark .mod-title{ color:#fff; }  html.light .mod-title{ color:#0f172a; }
+html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
+
+/* Barra de progresso - gradiente */
+.progress-track{ background: rgba(148,163,184,0.15); }
+</style>
+</head>
+<body class="h-full flex flex-col transition-colors duration-500 select-none">
+
+<!-- ==================== LOGIN ==================== -->
+<section id="view-login" class="hidden flex-1 relative flex items-center justify-center p-6">
+    <div class="aura-wrap aura-intro absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div class="orb-a"></div>
+        <div class="orb-b"></div>
+    </div>
+
+    <button onclick="toggleTheme()" class="theme-btn absolute top-5 right-5 z-30 flex items-center gap-2 px-4 py-2.5 rounded-xl border backdrop-blur-md text-sm font-semibold transition-all duration-300 active:scale-95" title="Alternar tema">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="theme-inline-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" class="hidden"></path>
+        </svg>
+        <span id="theme-inline-label">Claro</span>
+    </button>
+
+    <div id="login-card" class="glass-card relative z-10 w-full max-w-md rounded-3xl border p-8 md:p-10 backdrop-blur-2xl transition-transform duration-500 animate-login-in">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl text-white font-black text-3xl mb-4 ring-2 ring-white/20 shadow-2xl"
+                 style="background:linear-gradient(135deg,#06b6d4,#8b5cf6,#d946ef);">
+                B
+            </div>
+            <h1 class="twhite text-3xl font-extrabold tracking-tight">Burqa RH</h1>
+            <p class="tmuted text-sm mt-2">Orçamento &amp; Pessoas · Demo GitHub Pages</p>
+        </div>
+
+        <div id="login-error" class="hidden mb-5 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-500 flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <span>Credenciais inválidas. Use <b>admin</b> / <b>admin123</b>.</span>
+        </div>
+
+        <form onsubmit="doLogin(event)" class="space-y-5">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider mb-2 tmuted">Usuário</label>
+                <input type="text" name="username" value="admin" required autofocus
+                       class="form-input w-full px-4 py-3.5 rounded-xl border text-sm focus:outline-none transition-all duration-200" placeholder="Ex: admin">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider mb-2 tmuted">Senha</label>
+                <input type="password" name="password" value="admin123" required
+                       class="form-input w-full px-4 py-3.5 rounded-xl border text-sm focus:outline-none transition-all duration-200" placeholder="••••••">
+            </div>
+            <button type="submit"
+                    class="w-full py-4 rounded-xl border font-bold text-sm transition-all duration-300 active:scale-[0.98] bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50">
+                Acessar Sistema
+            </button>
+        </form>
+
+        <div class="mt-7 pt-5 border-t footer-bar text-center text-xs">
+            Demonstração estática — dados de exemplo, sem backend.
+        </div>
+    </div>
+</section>
+
+<!-- ==================== DASHBOARD ==================== -->
+<section id="view-dashboard" class="hidden flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 flex flex-col gap-8">
+    <div class="surface-card banner-area border rounded-3xl p-8 md:p-10 relative overflow-hidden">
+        <div class="relative z-10">
+            <span class="pill-indigo pill px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border">Demo Estática</span>
+            <h1 class="twhite text-3xl md:text-4xl font-extrabold tracking-tight mt-4">Burqa RH · Painel Executivo</h1>
+            <p class="tmuted max-w-2xl text-sm leading-relaxed mt-3">
+                Visão consolidada de headcount, folha salarial e orçamento de RH da empresa.
+                Navegue pelos módulos para ver os dados de exemplo (persistidos na memória, sem servidor).
+            </p>
+        </div>
+        <div class="absolute -right-12 -top-12 w-60 h-60 opacity-25 pointer-events-none"
+             style="background:radial-gradient(circle,#8b5cf6 0%,transparent 70%)"></div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="surface-card glass-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Funcionários Ativos</p>
+            <p id="kpi-head" class="twhite text-3xl font-extrabold">—</p>
+            <p class="card-note text-xs mt-1">em <span id="kpi-head-note">—</span></p>
+        </div>
+        <div class="surface-card glass-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Folha Mensal</p>
+            <p id="kpi-payroll" class="accent-emerald text-3xl font-extrabold">—</p>
+            <p class="card-note text-xs mt-1">salários base (CLT)</p>
+        </div>
+        <div class="surface-card glass-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Custo Total RH</p>
+            <p id="kpi-cost" class="accent-rose text-3xl font-extrabold">—</p>
+            <p class="card-note text-xs mt-1">+35% encargos &amp; benefícios</p>
+        </div>
+        <div class="surface-card glass-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Orçamento Anual RH</p>
+            <p id="kpi-annual" class="accent-violet text-3xl font-extrabold">—</p>
+            <p class="card-note text-xs mt-1">projeção 12 meses</p>
+        </div>
+    </div>
+
+    <!-- Módulos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div onclick="goView('employees')" class="mod-card surface-card border rounded-3xl p-7 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 relative overflow-hidden group">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold mb-4" style="background:linear-gradient(135deg,#06b6d4,#6366f1)">1</div>
+            <h3 class="mod-title text-xl font-bold mb-1.5">Funcionários</h3>
+            <p class="mod-desc text-sm mb-10">Quadro ativo, cargos, salários e departamentos. Busca e filtros em tempo real.</p>
+            <span class="accent-indigo text-sm font-semibold inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">Abrir módulo →</span>
+        </div>
+        <div onclick="goView('budget')" class="mod-card surface-card border rounded-3xl p-7 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 relative overflow-hidden group">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold mb-4" style="background:linear-gradient(135deg,#10b981,#059669)">2</div>
+            <h3 class="mod-title text-xl font-bold mb-1.5">Orçamento</h3>
+            <p class="mod-desc text-sm mb-10">Despesas por departamento, custo por head e projeções do ano.</p>
+            <span class="accent-emerald text-sm font-semibold inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">Abrir módulo →</span>
+        </div>
+        <div onclick="goView('simulator')" class="mod-card surface-card border rounded-3xl p-7 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 relative overflow-hidden group">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold mb-4" style="background:linear-gradient(135deg,#8b5cf6,#c026d3)">3</div>
+            <h3 class="mod-title text-xl font-bold mb-1.5">Simulador</h3>
+            <p class="mod-desc text-sm mb-10">Simule contratações, desligamentos e reajustes; veja o impacto no orçamento.</p>
+            <span class="accent-violet text-sm font-semibold inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">Abrir módulo →</span>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== VIEW FUNCIONÁRIOS ==================== -->
+<section id="view-employees" class="hidden flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 flex flex-col gap-6">
+    <div class="flex items-center gap-4">
+        <button onclick="goView('dashboard')" class="btn-back flex items-center justify-center w-11 h-11 rounded-2xl border text-sm font-bold transition-all duration-200 hover:-translate-x-0.5 active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        </button>
+        <div>
+            <h2 class="twhite text-2xl font-extrabold tracking-tight">1 · Funcionários</h2>
+            <p class="tmuted text-sm" id="emp-subtitle">Quadro ativo da empresa</p>
+        </div>
+        <button onclick="goView('dashboard')" class="ml-auto glass-card border px-5 py-2.5 rounded-2xl text-sm font-semibold tcell-strong hover:opacity-85 transition-opacity">← Dashboard</button>
+    </div>
+
+    <!-- Dados demográficos -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Total</p>
+            <p id="dem-total" class="twhite text-2xl font-extrabold">0</p>
+        </div>
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">CLT</p>
+            <p id="dem-clt" class="accent-emerald text-2xl font-extrabold">0</p>
+        </div>
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">PJ</p>
+            <p id="dem-pj" class="accent-indigo text-2xl font-extrabold">0</p>
+        </div>
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Folha</p>
+            <p id="dem-payroll" class="accent-violet text-2xl font-extrabold">—</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="surface-card border rounded-3xl p-6 space-y- sos btn-gradient">
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="card-label block text-xs font-semibold uppercase tracking-wider mb-2">Buscar</label>
+                <input id="f-search" oninput="renderEmployees()" placeholder="Nome, CPF ou cargo…"
+                       class="form-input w-full px-4 py-3 rounded-2xl border text-sm">
+            </div>
+            <div>
+                <label class="card-label block text-xs font-semibold uppercase tracking-wider mb-2">Departamento</label>
+                <select id="f-dept" onchange="renderEmployees()" class="form-input w-full px-4 py-3 rounded-2xl border text-sm">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div>
+                <label class="card-label block text-xs font-semibold uppercase tracking-wider mb-2">Contrato</label>
+                <select id="f-contract" onchange="renderEmployees()" class="form-input w-full px-4 py-3 rounded-2xl border text-sm">
+                    <option value="">Todos</option>
+                    <option>CLT</option>
+                    <option>PJ</option>
+                    <option>Estágio</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="surface-card border rounded-3xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b text-xs uppercase tracking-wider card-label">
+                        <th class="p-5 font-semibold">Colaborador</th>
+                        <th class="p-5 font-semibold">Cargo</th>
+                        <th class="p-5 font-semibold">Departamento</th>
+                        <th class="p-5 font-semibold text-right">Salário Base</th>
+                        <th class="p-5 font-semibold text-center">Contrato</th>
+                        <th class="p-5 font-semibold text-center">Custo Total/Mês</th>
+                    </tr>
+                </thead>
+                <tbody id="emp-tbody" class="divide-y tbody-divide"></tbody>
+            </table>
+        </div>
+        <div id="emp-empty" class="hidden text-center py-14">
+            <p class="text-4xl mb-3">🔍</p>
+            <p class="tmuted font-medium">Nenhum resultado para os filtros.</p>
+        </div>
+        <div class="border-t footer-bar px-5 py-4 flex items-center justify-between text-sm">
+            <span id="emp-count" class="font-medium">0 colaboradores</span>
+            <div class="flex items-center gap-2">
+                <button onclick="empPagePrev()" id="emp-prev" class="btn-pg px-4 py-2 rounded-xl border text-xs font-bold uppercase tracking-wide opacity-40 pointer-events-none">← Anterior</button>
+                <span id="emp-page" class="px-2 font-mono text-xs mx-1">1/1</span>
+                <button onclick="empPageNext()" id="emp-next" class="btn-pg px-4 py-2 rounded-xl border text-xs font-bold uppercase tracking-wide opacity-40 pointer-events-none">Próxima →</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== ORÇAMENTO ==================== -->
+<section id="view-budget" class="hidden flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 flex flex-col gap-6">
+    <div class="flex items-center gap-4 flex-wrap">
+        <button onclick="goView('dashboard')" class="btn-icon w-11 h-11 rounded-2xl border flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200" aria-label="Voltar">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="flex-1">
+            <h2 class="nav-title text-2xl font-extrabold tracking-tight">2 · Orçamento RH</h2>
+            <p id="budg-sub" class="nav-sub text-sm">Análise de custos por departamento</p>
+        </div>
+        <button onclick="openSimFromBudget()" class="btn-accent px-5 py-3 rounded-2xl text-sm font-bold text-white inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 active:scale-95 transition-all duration-200 shadow-lg shadow-indigo-600/30">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+            Simular Cenário
+        </button>
+    </div>
+
+    <!-- KPIs orçamento -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Orçamento do Ano</p>
+            <p id="budg-total" class="card-value text-2xl font-extrabold">R$ —</p>
+            <p class="card-note text-xs mt-1">Estipulado</p>
+        </div>
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Executado</p>
+            <p id="budg-spent" class="accent-emerald text-2xl font-extrabold">R$ —</p>
+            <p class="card-note text-xs mt-1">Até o momento</p>
+        </div>
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Custo por Head</p>
+            <p id="budg-cph" class="accent-indigo text-2xl font-extrabold">R$ —</p>
+            <p class="card-note text-xs mt-1">Média empresa</p>
+        </div>
+        <div class="surface-card border rounded-2xl p-5">
+            <p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Consumo do Orçamento</p>
+            <p id="budg-pct" class="accent-violet text-2xl font-extrabold">—%</p>
+            <div class="progress-track h-2.5 rounded-full mt-3 overflow-hidden">
+                <div id="budg-pct-bar" class="h-full rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#22d3ee,#a78bfa)"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custos por departamento -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1 flex flex-col gap-5" id="budg-dept-cards"></div>
+        <div class="lg:col-span-2 surface-card border rounded-3xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="card-label border-b text-xs font-semibold uppercase tracking-wider">
+                            <th class="p-5">Descrição</th>
+                            <th class="p-5 text-right">Mensal</th>
+                            <th class="p-5 text-right">Anual</th>
+                            <th class="p-5 text-center">Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="budg-tbody" class="divide-y tbody-divide"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="surface-card border rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg bg-amber-500/15 border border-amber-500/30 text-amber-500">⚠</div>
+        <p class="card-note text-sm leading-relaxed">
+            Valores de demonstração. Encargos estimados em <span class="font-bold">+35%</span> sobre salário base (INSS, FGTS, 13º, férias + benefícios).
+        </p>
+    </div>
+</section>
+
+<!-- ==================== SIMULADOR ==================== -->
+<section id="view-simulator" class="hidden flex-1 max-w-7xl w-full mx-auto p-6 md:p-10 flex flex-col gap-8">
+    <div class="flex items-center gap-4">
+        <button onclick="goView('dashboard')" class="btn-back w-11 h-11 rounded-2xl border flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        </button>
+        <div class="flex-1">
+            <h2 class="twhite text-2xl font-extrabold tracking-tight">3 · Simulador de Cenários</h2>
+            <p id="sim-sub" class="tmuted text-sm">Ajuste variáveis e veja o impacto na folha</p>
+        </div>
+        <button onclick="goView('budget')" class="theme-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold hover:scale-[1.02] active:scale-95 transition-all duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M3 8h18M9 12h6l-3 6-3-6z"/></svg>
+            Ver Orçamento
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <!-- Painel de controles -->
+        <div class="surface-card border rounded-3xl p-7 flex flex-col gap-6">
+            <h3 class="card-label text-xs font-semibold uppercase tracking-wider">Variáveis do Cenário</h3>
+
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="card-label text-sm font-semibold">Reajuste salarial anual</label>
+                    <span class="accent-indigo font-mono text-sm font-bold" id="sim-rea-out">+0%</span>
+                </div>
+                <input type="range" id="sim-rea" min="0" max="25" value="0" oninput="updateSim()"
+                       class="w-full accent-indigo slider" step="1">
+                <div class="flex justify-between card-label text-[11px] mt-1.5"><span>0%</span><span>12,5%</span><span>25%</span></div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="card-label text-sm font-semibold">Novas contratações</label>
+                    <span class="accent-emerald font-mono text-sm font-bold" id="sim-hir-out">+0</span>
+                </div>
+                <input type="range" id="sim-hir" min="0" max="15" value="0" oninput="updateSim()"
+                       class="w-full accent-emerald slider" step="1">
+                <div class="flex justify-between card-label text-[11px] mt-1.5"><span>0</span><span>7</span><span>15</span></div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="card-label text-sm font-semibold">Salário médio (novos)</label>
+                    <span class="accent-violet font-mono text-sm font-bold" id="sim-sal-out">R$1.800</span>
+                </div>
+                <input type="range" id="sim-sal" min="1200" max="12000" value="1800" step="100" oninput="updateSim()"
+                       class="w-full accent-violet slider" step="1">
+                <div class="flex justify-between card-label text-[11px] mt-1.5"><span>R$1,2k</span><span>R$6,6k</span><span>R$12k</span></div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="card-label text-sm font-semibold">Encargos e benefícios</label>
+                    <span class="accent-rose font-mono text-sm font-bold" id="sim-enc-out">35%</span>
+                </div>
+                <input type="range" id="sim-enc" min="0" max="100" value="35" step="5" oninput="updateSim()"
+                       class="w-full accent-rose slider" step="1">
+                <div class="flex justify-between card-label text-[11px] mt-1.5"><span>0%</span><span>50%</span><span>100%</span></div>
+            </div>
+
+            <div class="pt-1 flex flex-col sm:flex-row gap-4">
+                <button onclick="presetSim('cautious')" class="surface-card border flex-1 rounded-2xl px-5 py-3.5 text-left hover:-translate-y-0.5 transition-all duration-200 active:scale-95">
+                    <p class="tc-white text-sm font-bold mb-0.5">🛡 Conservador</p>
+                    <p class="card-label text-xs">Reajuste 0% · sem contratações</p>
+                </button>
+                <button onclick="presetSim('growth')" class="surface-card border flex-1 rounded-2xl px-5 py-3.5 text-left hover:-translate-y-0.5 transition-all duration-200 active:scale-95">
+                    <p class="tc-white text-sm font-bold mb-0.5">🚀 Expansão</p>
+                    <p class="card-label text-xs">Reajuste 10% · +8 contratações</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Resultado -->
+        <div class="flex flex-col gap-6">
+            <div class="surface-card border rounded-3xl p-7">
+                <p class="card-label text-xs font-semibold uppercase tracking-wider mb-5">Impacto no Custo Anual de RH</p>
+                <div class="flex flex-col items-start gap-5">
+                    <div class="w-full">
+                        <div class="flex items-end justify-between mb-2">
+                            <span class="card-label text-sm font-semibold">Cenário atual</span>
+                            <span id="sim-cur-annual" class="accent-indigo font-mono text-2xl font-extrabold">R$ 0</span>
+                        </div>
+                        <div class="progress-track h-4 rounded-full overflow-hidden"><div id="sim-bar-cur" class="h-full w-1/2 rounded-full transition-all duration-300" style="background:linear-gradient(90deg,#6366f1,#a855f7)"></div></div>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex items-end justify-between mb-2">
+                            <span class="card-label text-sm font-semibold">Cenário simulado</span>
+                            <span id="sim-new-annual" class="accent-emerald font-mono text-2xl font-extrabold">R$ 0</span>
+                        </div>
+                        <div class="progress-track h-4 rounded-full overflow-hidden"><div id="sim-bar-new" class="h-full w-1/2 rounded-full transition-all duration-300" style="background:linear-gradient(90deg,#10b981,#22d3ee)"></div></div>
+                    </div>
+                </div>
+                <div id="sim-diff" class="mt-6 flex items-center gap-3 rounded-2xl border border-dashed p-4 text-sm"></div>
+            </div>
+
+            <div class="surface-card border rounded-3xl p-7">
+                <p class="card-label text-xs font-semibold uppercase tracking-wider mb-4">Detalhamento da diferença</p>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="card-label">Nova folha mensal</div>
+                    <div id="sim-new-month" class="text-right font-mono font-bold tcell-strong">R$ 0</div>
+                    <div class="card-label">Novo quadro (heads)</div>
+                    <div id="sim-new-head" class="text-right font-mono font-bold tcell-strong">0</div>
+                    <div class="card-label">Custo por colaborador</div>
+                    <div id="sim-new-cph" class="text-right font-mono font-bold tcell-strong">R$ 0</div>
+                    <div class="card-label">Custo Total RH / ano</div>
+                    <div id="sim-new-total" class="text-right font-mono font-bold accent-emerald">R$ 0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</section>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+"use strict";
+
+/* ===== Estado global ===== */
+var STATE = {
+    logged: false,
+    username: "",
+    dept: "Todas",
+    salary: 1.5,            // sua folha
+    enc: 35,                // sua folha
+    review: 0,              // sua folha
+    simReview: 0,
+    simHires: 0,
+simSalary: 1800,    sim: { rea: 0, hir: 0, sal: 1800, enc: 35 }
+};
+
+/* ===== Dados de demonstração ===== */
+var COLABS = [
+    { nome:"Ana Souza",      cpf:"412.873.065-10", dept:"Tecnologia",  cargo:"Engenheira de Software",     sal:12400, tipo:"CLT", status:"Ativo" },
+    { nome:"Bruno Lima",     cpf:"233.540.198-21", dept:"Operações",   cargo:"Analista de Logística",       sal:4850,  tipo:"CLT", status:"Ativo" },
+    { nome:"Carla Mendes",   cpf:"589.201.774-30", dept:"Financeiro",  cargo:"Analista Financeiro Sênior",  sal:7300,  tipo:"CLT", status:"Ativo" },
+    { nome:"Diego Rocha",    cpf:"301.664.902-88", dept:"Tecnologia",  cargo:"UX/UI Designer",              sal:6800,  tipo:"PJ",  status:"Ativo" },
+    { nome:"Elisa Farias",   cpf:"760.219.445-12", dept:"Comercial",   cargo:"Executiva de Contas",         sal:5900,  tipo:"CLT", status:"Férias" },
+    { nome:"Fábio Nunes",    cpf:"128.745.660-03", dept:"Comercial",   cargo:"SDR (Prospecção)",            sal:3200,  tipo:"CLT", status:"Ativo" },
+    { nome:"Gisele Prado",   cpf:"045.388.217-94", dept:"Operações",   cargo:"Supervisora de Armazém",      sal:5600,  tipo:"CLT", status:"Ativo" },
+    { nome:"Hugo Martins",   cpf:"917.006.331-52", dept:"Tecnologia",  cargo:"Dev Full-Stack Júnior",       sal:4100,  tipo:"CLT", status:"Ativo" },
+    { nome:"Ingrid Castro",  cpf:"635.148.079-26", dept:"Financeiro",  cargo:"Assistente Contábil",         sal:2900,  tipo:"CLT", status:"Ativo" },
+    { nome:"João Pedro",     cpf:"850.331.627-44", dept:"Comercial",   cargo:"Analista de Marketing",       sal:4700,  tipo:"PJ",  status:"Ativo" },
+    { nome:"Karen Alves",    cpf:"427.960.113-78", dept:"Tecnologia",  cargo:"QA Automation",               sal:5200,  tipo:"CLT", status:"Ativo" },
+    { nome:"Lucas Teixeira", cpf:"708.254.431-05", dept:"Executiva",   cargo:"Assistente de Direção",       sal:3800,  tipo:"CLT", status:"Ativo" },
+    { nome:"Mariana Costa",  cpf:"194.607.532-83", dept:"Comercial",   cargo:"Gerente de Vendas",           sal:8900,  tipo:"CLT", status:"Ativo" },
+    { nome:"Nathan Silva",   cpf:"342.780.916-31", dept:"Operações",   cargo:"Motorista",                   sal:2650,  tipo:"CLT", status:"Férias" },
+    { nome:"Olívia Ramos",   cpf:"956.114.280-67", dept:"Tecnologia",  cargo:"Tech Lead",                   sal:11900, tipo:"CLT", status:"Ativo" },
+    { nome:"Paulo Henrique", cpf:"271.846.550-19", dept:"Financeiro",  cargo:"Controller",                  sal:9800,  tipo:"CLT", status:"Ativo" },
+    { nome:"Raquel Fonseca", cpf:"803.529.674-42", dept:"Comercial",   cargo:"Analista de Sucesso",         sal:4200,  tipo:"CLT", status:"Ativo" },
+    { nome:"Samuel Almeida", cpf:"156.293.847-20", dept:"Operações",   cargo:"Auxiliar de Expedição",       sal:2200,  tipo:"CLT", status:"Ativo" },
+    { nome:"Tatiane Borges", cpf:"508.374.619-55", dept:"Executiva",   cargo:"Assistente Executiva",        sal:3500,  tipo:"CLT", status:"Ativo" },
+    { nome:"Vitor Duarte",   cpf:"689.015.332-98", dept:"Financeiro",  cargo:"Estagiário (Financeiro)",     sal:1690,  tipo:"Estágio", status:"Ativo" },
+    { nome:"Wellington Cruz",cpf:"037.592.418-71", dept:"Tecnologia",  cargo:"Analista de Infra",           sal:5700,  tipo:"PJ", status:"Ativo" },
+    { nome:"Yasmin Cardoso", cpf:"944.231.760-39", dept:"Comercial",   cargo:"Copywriter",                  sal:3600,  tipo:"PJ", status:"Ativo" },
+    { nome:"Zeca Ribeiro",   cpf:"412.678.093-50", dept:"Operações",   cargo:"Conferente",                  sal:2500,  tipo:"CLT", status:"Desligado" },
+    { nome:"Aline Peixoto",  cpf:"815.340.277-64", dept:"Tecnologia",  cargo:"Product Manager",             sal:10200, tipo:"CLT", status:"Ativo" },
+    { nome:"Breno Castilho", cpf:"220.451.686-32", dept:"Comercial",   cargo:"Account Executive",           sal:6100,  tipo:"CLT", status:"Ativo" }
+];
+
+var EXTRAS = {
+    "Tecnologia":   { benef: 240,  extra: "Home-office e licenças" },
+    "Comercial":    { benef: 450,  extra: "Plano de comissões" },
+    "Financeiro":   { benef: 300,  extra: "Certificações" },
+    "Operações":    { benef: 180,  extra: "Uniformes e EPI" },
+    "Executiva":    { benef: 520,  extra: "Plano saúde ampliado" }
+};
+
+var DPTS = ["Tecnologia","Comercial","Financeiro","Operações","Executiva"];
+
+/* ===== Tema ===== */
+function applyThemeCSS() {
+    var d = document.documentElement, t = STATE.theme;
+    localStorage.setItem('burqa_theme', t);
+}
+function setTheme(mode) {
+    STATE.theme = mode;
+    var d = document.documentElement;
+    d.classList.remove('dark', 'light');
+    if (mode === 'light') d.classList.add('light'); else d.classList.add('dark');
+    applyThemeCSS();
+    updateThemeIcon();
+}
+function toggleTheme() { setTheme(STATE.theme === 'dark' ? 'light' : 'dark'); }
+function updateThemeIcon() {
+    var sun = document.getElementById('ic-sun'), moon = document.getElementById('ic-moon');
+    if (STATE.theme === 'dark') { if(sun) sun.classList.remove('hidden'); if(moon) moon.classList.add('hidden'); }
+    else { if(sun) sun.classList.add('hidden'); if(moon) moon.classList.remove('hidden'); }
+}
+
+/* ===== Acesso / Login ===== */
+function doLogin(e) {
+    e.preventDefault();
+    var u = e.target.username.value.trim(), p = e.target.password.value;
+    if (u === 'admin' && p === 'admin123') {
+        STATE.logged = true; STATE.username = u;
+        goView('dashboard');
+    } else {
+        var er = document.getElementById('login-error');
+        if (er) { er.classList.remove('hidden'); }
+    }
+}
+function doLogout() {
+    STATE.logged = false;
+    location.hash = '';
+    goView('login');
+}
+
+/* ===== Router (views =====) */
+var VIEWS = ['login', 'dashboard', 'employees', 'budget', 'simulator'];
+function goView(v) {
+    if (!VIEWS.includes(v)) v = 'dashboard';
+    var i;
+    for (i = 0; i < VIEWS.length; i++) {
+        var el = document.getElementById('view-' + VIEWS[i]);
+        if (el) el.classList.add('hidden');
+    }
+    var target = document.getElementById('view-' + v);
+    if (target) {
+        target.classList.remove('hidden');
+        if (v === 'employees') renderEmployees();
+        if (v === 'budget') renderBudget();
+        if (v === 'simulator') updateSim();
+    }
+    if (v === 'login') location.hash = '#/login';
+    else location.hash = '#/' + v;
+    window.scrollTo(0, 0);
+}
+function goViewFrom(e, v) { e.preventDefault(); goView(v); }
+function refreshHash() {
+    var h = location.hash.replace('#/', '');
+    if (VIEWS.includes(h)) goView(h);
+}
+window.addEventListener('hashchange', refreshHashDelta);
+function refreshHashDelta() { refreshHash(); }
+
+/* ===== Formatação ===== */
+function fmtBr(n) { return n.toLocaleString('pt-BR'); }
+function fmtCur(n) { return 'R$ ' + fmtBr(Math.round(n)); }
+function fmtCur1(n) { return fmtCur(Math.round(n)); }
+var VS = { 'Ativo': 'emerald', 'Férias': 'amber', 'Desligado': 'rose', 'Afastado': 'amber', 'Suspenso': 'rose' };
+function statusPill(s) {
+    var c = VS[s] || 'indigo';
+    return '<span class="pill pill-' + c + ' inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold">' +
+           '<span class="w-1.5 h-1.5 rounded-full" style="background:currentColor"></span>' + s + '</span>';
+}
+function typePill(t) {
+    var c = t === 'PJ' ? 'indigo' : (t === 'Estágio' ? 'amber' : 'emerald');
+    return '<span class="pill pill-' + c + ' inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold">' + t + '</span>';
+}
+
+/* ===== Visões / Router ===== */
+var VIEWS = ['login', 'dashboard', 'employees', 'budget', 'simulator'];
+var elView = {};
+function goView(v) {
+    if (!STATE.logged && v !== 'login') v = 'dashboard';
+    if (v !== 'login' && !STATE.logged) { return; }
+    if (v === 'dashboard' && !STATE.logged) { v = 'login'; }
+    var i;
+    for (i = 0; i < VIEWS.length; i++) {
+        var el = document.getElementById('view-' + VIEWS[i]);
+        if (el) el.classList.add('hidden');
+    }
+    var target = document.getElementById('view-' + v);
+    if (target) {
+        target.classList.remove('hidden');
+        hydrateView(v);
+        if (v === 'dashboard') renderDash();
+        if (v === 'employees') runFilters();
+        if (v === 'budget') renderBudget();
+        if (v === 'simulator') updateSim();
+    }
+    if (STATE.logged) { STATE.last = v; }
+    window.scrollTo(0, 0);
+}
+function hydrateView(v) {
+    if (v === 'dashboard') { renderDash(); }
+    else if (v === 'employees') { fillDeptFilter(); updateNav(); }
+    else if (v === 'budget') { renderBudget(); updateNav(); }
+    else if (v === 'simulator') { updateSim(); updateNav(); }
+}
+
+/* ===== Toast ===== */
+function toast(msg, kind) {
+    var box = document.getElementById('toast-box');
+    if (!box) return;
+    var el = document.createElement('div');
+    el.className = 'toast-item surface-card border rounded-2xl px-5 py-4 flex items-center gap-3 shadow-xl text-sm font-semibold' +
+        (kind === 'ok' ? ' accent-emerald' : kind === 'warn' ? ' accent-amber' : ' accent-rose');
+    el.textContent = msg;
+    box.appendChild(el);
+    setTimeout(function () { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; setTimeout(function(){ el.remove(); }, 350); }, 2400);
+}
+
+/* ===== Funcionários (filtros + tabela) ===== */
+var PER_PAGE = 6;
+var pg = 1, pgTarget = 'table';
+var fSearch = '', fDept = '', fStatus = '', fTipo = '';
+function fillDeptFilter() {
+    var sel = document.getElementById('f-dept');
+    if (!sel || sel.options.length > 1) return;
+    DPTS.forEach(function (d) {
+        var o = document.createElement('option');
+        o.value = d; o.textContent = d;
+        sel.appendChild(o);
+    });
+}
+function applyFilters() {
+    fSearch = (document.getElementById('f-search') ? document.getElementById('f-search').value : '').toLowerCase();
+    fDept = (document.getElementById('f-dept') ? document.getElementById('f-dept').value : '');
+    fStatus = (document.getElementById('f-status') ? document.getElementById('f-status').value : '');
+    fTipo = (document.getElementById('f-tipo') ? document.getElementById('f-tipo').value : '');
+    renderEmployees();
+}
+function clearEmpFilters() {
+    ['f-search','f-dept','f-status','f-tipo'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    applyFilters();
+}
+function filteredEmployees() {
+    return COLABS.filter(function (e) {
+        var s = (e.nome + ' ' + e.cpf + ' ' + e.cargo + ' ' + e.dept).toLowerCase();
+        if (fSearch && s.indexOf(fSearch) === -1) return false;
+        if (fDept && e.dept !== fDept) return false;
+        if (fTipo && e.tipo !== fTipo) return false;
+        if (fStatus && e.status !== fStatus) return false;
+        return true;
+    });
+}
+function renderEmployees() {
+    if (!STATE.logged) return;
+    var rows = filteredEmployees();
+    var total = rows.length;
+    var pages = Math.max(1, Math.ceil(total / PER_PAGE));
+    if (pg > pages) pg = pages;
+    if (pg < 1) pg = 1;
+
+    var tbody = document.getElementById('emp-tbody');
+    var empty = document.getElementById('emp-empty');
+    var count = document.getElementById('emp-count');
+    tbody.innerHTML = '';
+
+    if (total === 0) {
+        if (empty) empty.classList.remove('hidden');
+        if (tbody) { tbody.innerHTML = ''; var tp = tbody.parentNode; }
+    } else {
+        if (empty) empty.classList.add('hidden');
+        var start = (pg - 1) * PER_PAGE;
+        var slice = rows.slice(start, start + PER_PAGE);
+        var html = '';
+        slice.forEach(function (e) {
+            html += '<tr class="card-hover transition-colors duration-150">' +
+                '<td class="p-5"><div class="flex items-center gap-3">' +
+                '<div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 twhite" style="background:linear-gradient(135deg,#6366f1,#a855f7)">' + initials(e.nome) + '</div>' +
+                '<div><p class="tcell-strong font-semibold text-sm">' + e.nome + '</p>' +
+                '<p class="tcell-muted text-xs">' + e.tipo + ' · ' + e.dept + '</p></div></div></td>' +
+                '<td class="p-5 tcell-mono text-sm">' + e.cpf + '</td>' +
+                '<td class="p-5 tcell-strong text-sm">' + e.cargo + '</td>' +
+                '<td class="p-5 tcell-mono text-sm">' + e.dept + '</td>' +
+                '<td class="p-5 tcell-mono text-sm">' + fmtCur(e.sal) + '</td>' +
+                '<td class="p-5">' + statusPill(e.status) + '</td>' +
+                '</tr>';
+        });
+        tbody.innerHTML = html;
+        // paginë
+        var prev = document.getElementById('emp-prev'), next = document.getElementById('emp-next'), pageInfo = document.getElementById('emp-page');
+        if (prev) { prev.classList.toggle('opacity-40', pg <= 1); prev.classList.toggle('opacity-100', pg > 1); prev.classList.toggle('pointer-events-none', pg <= 1); }
+        if (next) { next.classList.toggle('opacity-40', pg >= pages); next.classList.toggle('opacity-100', pg < pages); next.classList.toggle('pointer-events-none', pg >= pages); }
+        if (pageInfo) pageInfo.textContent = pg + ' / ' + pages;
+    }
+    if (count) count.textContent = total + ' colaborador(es)';
+}
+
+function empPaging(dir) { pg += dir; renderEmployees(); }
+
+/* ===== Orçamento ===== */
+function kpiRow(label, value, cls) {
+    return '<div class="surface-card glass-card border rounded-2xl p-3"><div class="flex items-center justify-between gap-3"><span class="card-label text-xs font-semibold">' + label + '</span><span class="' + cls + ' font-mono text-lg font-bold">' + value + '</span></div></div>';
+}
+function renderBudget() {
+    if (!STATE.logged) return;
+    var deptCosts = {};
+    var totalBase = 0;
+    COLABS.filter(function (e) { return e.status === 'Ativo'; }).forEach(function (e) {
+        if (!deptCosts[e.dept]) deptCosts[e.dept] = 0;
+        deptCosts[e.dept] += e.sal;
+        totalBase += e.sal;
+    });
+    var enc = 0.35;
+    var totalCost = totalBase * (1 + enc Hare);
+    $('#bud-total').textContent = fmtCur(totalCost);
+    var active = COLABS.filter(function(e){return e.status==='Ativo';}).length;
+    var budgetVal = active * 3800 * 13;
+    $('#bud-annual').textContent = fmtCur(budgetVal);
+    var pct = Math.min(100, Math.round((totalCost / (budgetVal || 1)) * 100));
+    $('#bud-pct').textContent = pct + '%';
+    $('#bud-pct-bar') && ($('#bud-pct-bar').style.width = pct + '%');
+
+    var box = document.getElementById('bud-dept');
+    if (box) {
+        box.innerHTML = '';
+        Object.keys(deptCosts).sort().forEach(function (d) {
+            var v = deptCosts[d];
+            var divC = document.createElement('div');
+            divC.className = 'flex items-center justify-between gap-4 text-sm';
+            divC.innerHTML = '<span class="tcell-strong font-semibold">' + d + '</span>' + kpiRow('', fmtCur(v * (1 + enc)), 'accent-emerald');
+            box.appendChild(divC);
+        });
+    }
+}
+
+/* ===== Orçamento ===== */
+var ENC = 0.35;                       /* encargos + benefícios sobre salário base */
+function deptCost() {
+    var m = {};
+    COLABS.filter(function (e) { return e.status === 'Ativo'; }).forEach(function (e) {
+        m[e.dept] = (m[e.dept] || 0) + e.sal;
+    });
+    return m;
+}
+function totalPayroll() {
+    var t = 0;
+    COLABS.forEach(function (e) { if (e.status === 'Ativo') t += e.sal; });
+    return t;
+}
+function renderBudget() {
+    if (!STATE.logged) return;
+    var dc = deptCost();
+    var total = totalPayroll();
+
+    setText('bud-total', fmtCur(total * (1 + ENC)));
+    setText('bud-spent', fmtCur(total));
+    setText('bud-churn', countsAtivos() + ' heads');
+    setText('bud-margin', '-' );
+    var annual = total * 13.3 * (1 + ENC);
+    setText('bud-annual', fmtCur(annual));
+
+    /* barra de consumo (orçamento anual projetado = total*13.3) */
+    var pct = (annual / (annual * 1.0)) * 100;
+    var bar = document.getElementById('bud-bar');
+    if (bar) bar.style.width = Math.min(100, pct) + '%';
+
+    /* cards por departamento */
+    var cards = document.getElementById('bud-dept-cards');
+    if (cards) {
+        cards.innerHTML = '';
+        Object.keys(dc).forEach(function (d) {
+            var v = dc[d];
+            var el = document.createElement('div');
+            el.className = 'surface-card border rounded-2xl p-5';
+            el.innerHTML =
+                '<p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">' + d + '</p>' +
+                '<p class="twhite text-2xl font-extrabold mb-2">' + fmtCur(v * (1 + ENC)) + '</p>' +
+                '<p class="card-note text-xs">' + v * (1 + ENC) / 7 + ' / head (aproximado)</p>';
+            cards.appendChild(el);
+        });
+    }
+
+    /* tabela de despesas */
+    var rows = [
+        { d: 'Salários (base ativo)', v: total, t: 'Recorrente' },
+        { d: 'Encargos trabalhistas (INSS/FGTS)', v: total * 0.35, t: 'Recorrente' },
+        { d: 'Vale Transporte', v: total * 0.05, t: 'Benefício' },
+        { d: 'Vale Refeição', v: total * 0.08, t: 'Benefício' },
+        { d: 'Plano de Saúde', v: total * 0.06, t: 'Benefício' }
+    ];
+    var head = document.getElementById('bud-head'), body = document.getElementById('bud-body');
+    if (body) {
+        body.innerHTML = '';
+        rows.forEach(function (r) {
+            var tr = document.createElement('tr');
+            tr.className = 'tbody-divide';
+            tr.innerHTML =
+                '<td class="p-4 tcell-strong text-sm">' + r.d + '</td>' +
+                '<td class="p-4 text-right tcell-mono font-mono text-sm">' + fmtCur(r.v) + '</td>' +
+                '<td class="p-4 text-right tcell-mono font-mono text-sm">' + fmtCur(r.v * 12) + '</td>' +
+                '<td class="p-4 text-center"><span class="pill pill-whou inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold">' + r.t + '</span></td>';
+            body.appendChild(tr);
+        });
+    }
+}
+
+/* ===== Simulador ===== */
+function updateSim() {
+    if (!STATE.logged) return;
+    var rea, hir, sal, enc;
+    var e1 = document.getElementById('sim-rea'), e2 = document.getElementById('sim-hir'),
+        e3 = document.getElementById('sim-sal'), e4 = document.getElementById('sim-enc');
+    rea = e1 ? parseInt(e1.value, 10) : STATE.sim.rea;
+    hir = e2 ? parseInt(e2.value, 10) : STATE.sim.hir;
+    sal = e3 ? parseInt(e3.value, 10) : STATE.sim.sal;
+    enc = e4 ? parseInt(e4.value, 10) : STATE.sim.enc;
+
+    var curBase = totalPayroll();
+    var prevAT = curBase;                       /* antes do reajuste */
+    var custB = curBase * (1 + enc / 100);      /* custo atual c/ encargos */
+
+    var newBase = curBase * (1 + rea / 100) + hir * sal;
+    var custN = newBase * (1 + enc / 100�);
+
+    STATE.sim.rea = rea; STATE.sim.hir = hir; STATE.sim.sal = sal; STATE.sim.enc = enc;
+    STATE.sim.base = custBFernando;
+    STATE.sim.newBase = newBase;
+
+    if (e1) { var out = document.getElementById('sim-rea-out'); if (out) out.textContent = '+' + rea + '%'; }
+    if (e3) { var out2 = document.getElementById('sim-sal-out'); if (out2) out2.textContent = fmtCur(sal) + '/m'; }
+    if (e2) { var out3 = document.getElementById('sim-hir-out'); if (out3) out3.textContent = '+' + hir + ' heads'; }
+
+    renderResult(newBase, custB, custN);
+    renderSimDetail(rea, hir, sal);
+}
+function renderResult(nb, cb, cn) {
+    var an = msg ? an : 'sim-annual';
+    document.getElementById('sim-annual').textContent = fmtCur(cn * 12);
+
+    var curAnn = document.getElementById('sim-cur-annual');
+    var newAnn = document.getElementById('sim-new-annual');
+    if (curAnn) curAnn.textContent = fmtCur(cb * 12);
+    if (newAnn) newAnn.textContent = fmtCur(cn * 12);
+
+    var pct = cb > 0 ? Math.round(nb / cb * 100) : 0;
+    var barCur = document.getElementById('sim-bar-cur'), barNew = document.getElementById('sim-bar-new');
+    if (barCur) barCur.style.width = Math.min(100, 100) + '%';
+    if (barNew) barNew.style.width = Math.min(100, pct) + '%';
+
+    var diff = document.getElementById('sim-diff');
+    if (diff) {
+        var delta = cn - cb, cls = delta > 0 ? 'accent-rose' : 'accent-emerald', floor = delta <= 0 ? 'economia' : 'aumento';
+        diff.innerHTML = '<span class="text-3xl">' + (delta > 0 ? '↗' : '↘') + '</span>' +
+            '<div><p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">Impacto mensal</p>' +
+            '<p class="' + (delta >= 0 ? 'accent-rose' : 'accent-emerald') + ' text-xl font-extrabold font-mono">' + (delta > 0 ? '+' : '−') + ' ' + fmtCur(Math.abs(delta)) + '/mês</p></div>';
+    }
+}
+function renderSimDetail(rea, hir, sal) {
+    var el = document.getElementById('sim-new-cph');
+    if (el) {
+        var active = COLABS.filter(function (x) { return x.status === 'Ativo' && x.tipo !== 'Estágio'; }).length + hir;
+        el.textContent = 'R$ ' + fmt((STATE.sim.newBase * (1 + STATE.sim.enc / 100)) / Math.max(1, active));
+    }
+}
+function presetSim(kind) {
+    var e1 = document.getElementById('sim-rea'), e2 = document.getElementById('sim-hir'),
+        e3 = document.getElementById('sim-sal'), e4 = document.getElementById('sim-enc');
+    if (kind === 'conservative') {
+        if (e1) e1.value = 0; if (e2) e2.value = 0; if (e4) e4.value = 35;
+    } else if (kind === 'expansion') {
+        if (e1) e1.value = 10; if (e2) e2.value = 8; if (e4) e4.value = 35; if (e3) e3.value = 4500;
+    } else if (kind === 'attrition') {
+        if (e1) e1.value = 3; if (e2) e2.value = 0; if (e4) e4.value = 30;
+    }
+    updateSim();
+}
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function fillDeptFilter() {
+    var sel = document.getElementById('emp-dept');
+    if (!sel || sel.childElementCount > 1) return;
+    Object.keys(deptCost()).sort().forEach(function (d) {
+        var o = document.createElement('option');
+        o.value = d; o.textContent = d;
+        sel.appendChild(o);
+    });
+}
+function toggleStatusPill() { }
+
+/* ===== init ===== */
+function hashChanged() {
+    var h = (location.hash || '#/dashboard');
+    if (h.indexOf('view=sim') > -1) h = '#/simulator';
+    var v = h.replace('#/', '').replace('#', '');
+    if (VIEWS.indexOf(v) === -1) v = 'dashboard';
+    goView(v);
+}
+function init() {
+    fillDeptFilter();
+    updateThemeIcon();
+    var h = (location.hash || '#/login');
+    if (h.indexOf('view=') > -1) h = '#/login';
+    var v = h.replace('#/', '').replace('#', '');
+    if (VIEWS.indexOf(v) === -1) v = (STATE.logged ? 'dashboard' : 'login');
+    if (!STATE.logged && v !== 'login') v = 'login';
+    goView(v);
+    updateSim();
+    renderDashboard();
+}
+
+/* ===== Dashboard (KPIs + resumo) ===== */
+function renderDashboard() {
+    if (!STATE.logged) return;
+    var ativos = COLABS.filter(function (e) { return e.status === 'Ativo'; });
+    var totalBase = ativos.reduce(function (a, e) { return a + e.sal; }, 0);
+    var folhaTotal = totalBase * (1 + ENC / 100);
+    var anual = folhaTotal * 13;
+
+    setText('kpi-head', ativos.length);
+    setText('kpi-payroll', fmtCur(totalBase));
+    setText('kpi-cost', fmtCur(folhaTotal));
+    setText('kpi-annual', fmtCur(anual));
+}
+</script>
+</body>
+</html>
