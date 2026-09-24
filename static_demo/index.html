@@ -943,10 +943,10 @@ function getQuadroValue(emp, monthIndex, rule) {
         case 'bemestar': return 150;
         case 'he': return (monthIndex === 5 || monthIndex === 11) ? base * 0.15 : base * 0.05;
         case 'noturno': return emp.dept === 'Operações' ? base * 0.20 : 0;
-        case 'peric': return emp.dept === 'Engenharia' ? base * 0.30 : 0;
+        case 'peric': return (emp.dept === 'Tecnologia' || emp.dept === 'Operações') ? base * 0.15 : 0;
         case 'comissao': return emp.dept === 'Comercial' ? base * 0.25 : 0;
         case 'plr': return (monthIndex === 5 || monthIndex === 11) ? base * 0.8 : 0;
-        case 'grat': return emp.level === 'Gestão' ? 1200 : 0;
+        case 'grat': return (emp.cargo.indexOf('Gerente') > -1 || emp.cargo.indexOf('Diretoria') > -1 || emp.cargo.indexOf('Diretora') > -1 || emp.cargo.indexOf('Head') > -1 || emp.cargo.indexOf('Arquiteta') > -1) ? 1200 : 0;
         case 'ajuda': return 250;
         case 'inss': return base * 0.20;
         case 'rat': return base * 0.02;
@@ -1013,7 +1013,7 @@ function renderQuadro(idx) {
             var tr = document.createElement('tr');
             tr.className = 'table-row border-b transition-colors';
             
-            var rowHtml = '<td class="p-4 sticky left-0 z-10 surface-card"><span class="tcell-strong font-semibold block">' + emp.name + '</span><span class="tcell-muted text-xs block">' + emp.dept + ' · ' + emp.cargo + '</span></td>';
+            var rowHtml = '<td class="p-4 sticky left-0 z-10 surface-card"><span class="tcell-strong font-semibold block">' + (emp.nome || emp.name) + '</span><span class="tcell-muted text-xs block">' + emp.dept + ' · ' + emp.cargo + '</span></td>';
             var empRowTotal = 0;
             
             for (var m = 0; m < 12; m++) {
