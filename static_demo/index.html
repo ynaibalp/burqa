@@ -387,31 +387,46 @@ html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
         </div>
     </div>
 
-    <!-- Custos por departamento -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-1 flex flex-col gap-5" id="budg-dept-cards"></div>
-        <div class="lg:col-span-2 surface-card border rounded-3xl overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="card-label border-b text-xs font-semibold uppercase tracking-wider">
-                            <th class="p-5">Descrição</th>
-                            <th class="p-5 text-right">Mensal</th>
-                            <th class="p-5 text-right">Anual</th>
-                            <th class="p-5 text-center">Tipo</th>
-                        </tr>
-                    </thead>
-                    <tbody id="budg-tbody" class="divide-y tbody-divide"></tbody>
-                </table>
+    <!-- Custos por departamento / 39 Quadros -->
+    <div class="surface-card border rounded-3xl p-6 flex flex-col gap-6">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-1">
+                <button onclick="prevQuadro()" class="btn-icon w-11 h-11 rounded-2xl border flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 shrink-0" title="Quadro Anterior">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="flex-1">
+                    <label for="quadro-select" class="block text-xs font-semibold uppercase tracking-wider mb-1 card-label">Selecione o Quadro (1 a 39)</label>
+                    <select id="quadro-select" onchange="onQuadroChange(this.value)" class="surface-card border rounded-2xl px-4 py-3 text-sm font-semibold w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        <!-- preenchido via JS -->
+                    </select>
+                </div>
+                <button onclick="nextQuadro()" class="btn-icon w-11 h-11 rounded-2xl border flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 shrink-0" title="Próximo Quadro">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
             </div>
         </div>
-    </div>
 
-    <div class="surface-card border rounded-2xl p-5 flex items-center gap-4">
-        <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg bg-amber-500/15 border border-amber-500/30 text-amber-500">⚠</div>
-        <p class="card-note text-sm leading-relaxed">
-            Valores de demonstração. Encargos estimados em <span class="font-bold">+35%</span> sobre salário base (INSS, FGTS, 13º, férias + benefícios).
-        </p>
+        <div id="quadro-desc-banner" class="p-4 rounded-2xl border bg-indigo-500/10 border-indigo-500/20 text-sm flex items-center gap-3">
+            <span class="text-xl">📊</span>
+            <div>
+                <strong id="quadro-title-txt" class="font-bold">Quadro 01: Salário Base</strong>
+                <p id="quadro-desc-txt" class="text-xs mt-0.5 opacity-80">Salário contratual mensal fixo por colaborador.</p>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border">
+            <table class="w-full text-left border-collapse" id="quadro-table">
+                <thead id="quadro-thead" class="table-head border-b text-xs font-semibold uppercase tracking-wider">
+                    <!-- Gerado por JS -->
+                </thead>
+                <tbody id="quadro-tbody" class="divide-y text-sm">
+                    <!-- Gerado por JS -->
+                </tbody>
+                <tfoot id="quadro-tfoot" class="border-t font-bold text-sm">
+                    <!-- Gerado por JS -->
+                </tfoot>
+            </table>
+        </div>
     </div>
 </section>
 
@@ -808,75 +823,223 @@ function renderEmployees() {
 
 function empPaging(dir) { pg += dir; renderEmployees(); }
 
-/* ===== Orçamento ===== */
-var ENC = 0.35;                       /* encargos + benefícios sobre salário base */
-function deptCost() {
-    var m = {};
-    COLABS.filter(function (e) { return e.status === 'Ativo'; }).forEach(function (e) {
-        m[e.dept] = (m[e.dept] || 0) + e.sal;
-    });
-    return m;
-}
+/* ===== Orçamento e 39 Quadros RH ===== */
+var ENC = 0.35;
+if (typeof STATE.quadro === 'undefined') STATE.quadro = 0;
+
+var QUADROS = [
+    { n: 1, cat: 'Remuneração Direta', name: 'Salário Base', desc: 'Salário contratual mensal fixo por colaborador.', rule: 'base' },
+    { n: 2, cat: 'Remuneração Direta', name: 'Salário com Reajuste Anual', desc: 'Salário atualizado com o dissídio/reajuste da categoria (aplicado a partir de março).', rule: 'reajuste' },
+    { n: 3, cat: 'Benefícios', name: 'Auxílio Alimentação / VR', desc: 'Vale-refeição e auxílio alimentação mensais (isentos de encargos via PAT).', rule: 'vr' },
+    { n: 4, cat: 'Benefícios', name: 'Vale-Transporte', desc: 'Auxílio transporte subsidiado com desconto legal de 6% do salário base.', rule: 'vt' },
+    { n: 5, cat: 'Benefícios', name: 'Plano de Saúde', desc: 'Assistência médica empresarial (coparticipação parcial da empresa).', rule: 'saude' },
+    { n: 6, cat: 'Benefícios', name: 'Plano Odontológico', desc: 'Assistência odontológica por colaborador.', rule: 'odonto' },
+    { n: 7, cat: 'Benefícios', name: 'Seguro de Vida em Grupo', desc: 'Apólice de seguro de vida obrigatória e opcional.', rule: 'seguro' },
+    { n: 8, cat: 'Benefícios', name: 'Previdência Privada / Complementar', desc: 'Plano de previdência patrocinado (match de contribuição).', rule: 'prev' },
+    { n: 9, cat: 'Benefícios', name: 'Auxílio Educação', desc: 'Reembolso ou subsídio para graduação, pós e cursos de idiomas.', rule: 'educacao' },
+    { n: 10, cat: 'Benefícios', name: 'Auxílio Creche / Babá', desc: 'Reembolso creche conforme legislação para colaboradores elegíveis.', rule: 'creche' },
+    { n: 11, cat: 'Benefícios', name: 'Complementos e Bem-estar', desc: 'Auxílio home office, Gympass e cestas de benefícios flexíveis.', rule: 'bemestar' },
+    { n: 12, cat: 'Adicionais e Variáveis', name: 'Horas Extras (+50% e +100%)', desc: 'Remuneração de horas extraordinárias e reflexos.', rule: 'he' },
+    { n: 13, cat: 'Adicionais e Variáveis', name: 'Adicional Noturno', desc: 'Adicional para jornadas em horário noturno (22h às 5h).', rule: 'noturno' },
+    { n: 14, cat: 'Adicionais e Variáveis', name: 'Periculosidade / Insalubridade', desc: 'Adicionais legais de risco ou insalubridade do posto.', rule: 'peric' },
+    { n: 15, cat: 'Adicionais e Variáveis', name: 'Comissões Comerciais', desc: 'Variáveis de vendas por atingimento de metas da área comercial.', rule: 'comissao' },
+    { n: 16, cat: 'Adicionais e Variáveis', name: 'PLR / Bônus de Desempenho', desc: 'Participação nos lucros e resultados ou bônus anual por metas.', rule: 'plr' },
+    { n: 17, cat: 'Adicionais e Variáveis', name: 'Gratificações de Função / Prêmios', desc: 'Gratificações de cargo de confiança e premiações internas.', rule: 'grat' },
+    { n: 18, cat: 'Adicionais e Variáveis', name: 'Ajuda de Custo / Diárias', desc: 'Reembolsos de viagens, hospedagem e deslocamentos operacionais.', rule: 'ajuda' },
+    { n: 19, cat: 'Encargos Sociais', name: 'INSS Patronal (20%)', desc: 'Contribuição previdenciária patronal sobre a folha de pagamento.', rule: 'inss' },
+    { n: 20, cat: 'Encargos Sociais', name: 'RAT / GILRAT (1% a 3%)', desc: 'Seguro de Acidentes do Trabalho conforme grau de risco da atividade.', rule: 'rat' },
+    { n: 21, cat: 'Encargos Sociais', name: 'Contribuições a Terceiros (Sistema S)', desc: 'SENAI, SESC, SEBRAE, INCRA e Salário-Educação agregados.', rule: 'sistemas' },
+    { n: 22, cat: 'Encargos Sociais', name: 'FGTS da Empresa (8%)', desc: 'Depósito mensal obrigatório na conta vinculada do FGTS.', rule: 'fgts' },
+    { n: 23, cat: 'Encargos Sociais', name: 'PIS / PASEP sobre a Folha (1%)', desc: 'Contribuição social incidente sobre a folha de salários.', rule: 'pis' },
+    { n: 24, cat: 'Encargos Sociais', name: 'Salário-Educação (2,5%)', desc: 'Encargo educacional corporativo obrigatório para empresas do regime.', rule: 'salarioed' },
+    { n: 25, cat: 'Encargos Sociais', name: 'Encargos sobre o 13º Salário', desc: 'Provisão de INSS, FGTS e RAT incidentes sobre a gratificação natalina.', rule: 'enc13' },
+    { n: 26, cat: 'Encargos Sociais', name: 'Encargos Reincidentes sobre Férias', desc: 'Incidências de encargos sobre o gozo de férias e 1/3 constitucional.', rule: 'encferias' },
+    { n: 27, cat: 'Provisões e Riscos', name: 'Provisão de 13º Salário (1/12)', desc: 'Provisão contábil mensal de 1/12 avos para pagamento do 13º.', rule: 'prov13' },
+    { n: 28, cat: 'Provisões e Riscos', name: 'Provisão de Férias + 1/3 (1,33/12)', desc: 'Provisão mensal para o gozo de 30 dias de férias e abono constitucional.', rule: 'provferias' },
+    { n: 29, cat: 'Provisões e Riscos', name: 'Provisão para Rescisão (Turnover)', desc: 'Reserva para aviso prévio indenizado e multa rescisória do FGTS (40%).', rule: 'provrescisao' },
+    { n: 30, cat: 'Provisões e Riscos', name: 'Provisão para Afastamentos / Doenças', desc: 'Custo de substituição ou complementação em afastamentos prolongados (INSS).', rule: 'provafast' },
+    { n: 31, cat: 'Provisões e Riscos', name: 'Contingência para Passivo Trabalhista', desc: 'Reserva financeira prudencial para riscos e litígios trabalhistas.', rule: 'contingencia' },
+    { n: 32, cat: 'Atração e Desenvolvimento', name: 'Recrutamento & Seleção (R&S)', desc: 'Custo médio por contratação (plataformas de vagas, headhunters, testes).', rule: 'rs' },
+    { n: 33, cat: 'Atração e Desenvolvimento', name: 'Onboarding e Integração', desc: 'Kits boas-vindas, exames admissionais e treinamentos de integração.', rule: 'onboarding' },
+    { n: 34, cat: 'Atração e Desenvolvimento', name: 'Treinamento & Desenvolvimento (T&D)', desc: 'Orçamento de capacitação técnica, liderança e workshops.', rule: 'td' },
+    { n: 35, cat: 'Atração e Desenvolvimento', name: 'Educação Corporativa / Licenças', desc: 'Plataformas de EAD, assinaturas de livros, congressos e certificações.', rule: 'edcorp' },
+    { n: 36, cat: 'Atração e Desenvolvimento', name: 'Software e Ferramentas (SaaS)', desc: 'Licenças de sistemas por colaborador (ERP, ferramentas de produtividade).', rule: 'software' },
+    { n: 37, cat: 'Operação e Indiretos', name: 'Uniformes, EPI e Identidade', desc: 'Fornecimento de vestimenta profissional, EPIs e crachás.', rule: 'epi' },
+    { n: 38, cat: 'Operação e Indiretos', name: 'Comunicação e Posto de Trabalho', desc: 'Linha corporativa, chip de celular, internet e amortização de mobiliário.', rule: 'postotrab' },
+    { n: 39, cat: 'Operação e Indiretos', name: 'Despesas Administrativas de RH (Overhead)', desc: 'Rateio de custos estruturais da gestão de pessoas e folha terceirizada.', rule: 'overhead' }
+];
+
 function totalPayroll() {
     var t = 0;
     COLABS.forEach(function (e) { if (e.status === 'Ativo') t += e.sal; });
     return t;
 }
-function renderBudget() {
+
+function buildBudgetKPIs() {
     if (!STATE.logged) return;
-    var dc = deptCost();
     var total = totalPayroll();
-
-    setText('bud-total', fmtCur(total * (1 + ENC)));
-    setText('bud-spent', fmtCur(total));
-    setText('bud-churn', countsAtivos() + ' heads');
-    setText('bud-margin', '-' );
     var annual = total * 13.3 * (1 + ENC);
-    setText('bud-annual', fmtCur(annual));
+    var cph = countsAtivos() > 0 ? (annual / countsAtivos()) / 12 : 0;
+    
+    setText('budg-total', fmtCur(annual));
+    setText('budg-spent', fmtCur(total * (1 + ENC)));
+    setText('budg-cph', fmtCur(cph));
+    setText('budg-pct', '78.4%');
+    var bar = document.getElementById('budg-pct-bar');
+    if (bar) bar.style.width = '78.4%';
+}
 
-    /* barra de consumo (orçamento anual projetado = total*13.3) */
-    var pct = (annual / (annual * 1.0)) * 100;
-    var bar = document.getElementById('bud-bar');
-    if (bar) bar.style.width = Math.min(100, pct) + '%';
-
-    /* cards por departamento */
-    var cards = document.getElementById('bud-dept-cards');
-    if (cards) {
-        cards.innerHTML = '';
-        Object.keys(dc).forEach(function (d) {
-            var v = dc[d];
-            var el = document.createElement('div');
-            el.className = 'surface-card border rounded-2xl p-5';
-            el.innerHTML =
-                '<p class="card-label text-xs font-semibold uppercase tracking-wider mb-1">' + d + '</p>' +
-                '<p class="twhite text-2xl font-extrabold mb-2">' + fmtCur(v * (1 + ENC)) + '</p>' +
-                '<p class="card-note text-xs">' + v * (1 + ENC) / 7 + ' / head (aproximado)</p>';
-            cards.appendChild(el);
+function initQuadroSelect() {
+    var sel = document.getElementById('quadro-select');
+    if (!sel || sel.children.length > 0) return;
+    
+    var cats = {};
+    QUADROS.forEach(function(q, i) {
+        if (!cats[q.cat]) cats[q.cat] = [];
+        cats[q.cat].push({ q: q, idx: i });
+    });
+    
+    Object.keys(cats).forEach(function(catName) {
+        var og = document.createElement('optgroup');
+        og.label = catName;
+        cats[catName].forEach(function(item) {
+            var opt = document.createElement('option');
+            opt.value = item.idx;
+            opt.textContent = String(item.q.n < 10 ? '0' + item.q.n : item.q.n) + ' — ' + item.q.name;
+            og.appendChild(opt);
         });
-    }
+        sel.appendChild(og);
+    });
+}
 
-    /* tabela de despesas */
-    var rows = [
-        { d: 'Salários (base ativo)', v: total, t: 'Recorrente' },
-        { d: 'Encargos trabalhistas (INSS/FGTS)', v: total * 0.35, t: 'Recorrente' },
-        { d: 'Vale Transporte', v: total * 0.05, t: 'Benefício' },
-        { d: 'Vale Refeição', v: total * 0.08, t: 'Benefício' },
-        { d: 'Plano de Saúde', v: total * 0.06, t: 'Benefício' }
-    ];
-    var head = document.getElementById('bud-head'), body = document.getElementById('bud-body');
-    if (body) {
-        body.innerHTML = '';
-        rows.forEach(function (r) {
+function getQuadroValue(emp, monthIndex, rule) {
+    var base = emp.sal;
+    switch(rule) {
+        case 'base': return base;
+        case 'reajuste': return monthIndex >= 2 ? base * 1.055 : base;
+        case 'vr': return 650;
+        case 'vt': return Math.min(base * 0.06, 220);
+        case 'saude': return 520;
+        case 'odonto': return 65;
+        case 'seguro': return 45;
+        case 'prev': return base * 0.03;
+        case 'educacao': return monthIndex % 3 === 0 ? 300 : 0;
+        case 'creche': return emp.dept === 'Comercial' ? 400 : 0;
+        case 'bemestar': return 150;
+        case 'he': return (monthIndex === 5 || monthIndex === 11) ? base * 0.15 : base * 0.05;
+        case 'noturno': return emp.dept === 'Operações' ? base * 0.20 : 0;
+        case 'peric': return emp.dept === 'Engenharia' ? base * 0.30 : 0;
+        case 'comissao': return emp.dept === 'Comercial' ? base * 0.25 : 0;
+        case 'plr': return (monthIndex === 5 || monthIndex === 11) ? base * 0.8 : 0;
+        case 'grat': return emp.level === 'Gestão' ? 1200 : 0;
+        case 'ajuda': return 250;
+        case 'inss': return base * 0.20;
+        case 'rat': return base * 0.02;
+        case 'sistemas': return base * 0.058;
+        case 'fgts': return base * 0.08;
+        case 'pis': return base * 0.01;
+        case 'salarioed': return base * 0.025;
+        case 'enc13': return monthIndex === 11 ? base * 0.295 : 0;
+        case 'encferias': return monthIndex === 0 ? base * 0.133 : 0;
+        case 'prov13': return base / 12;
+        case 'provferias': return (base * 1.333) / 12;
+        case 'provrescisao': return base * 0.045;
+        case 'provafast': return base * 0.015;
+        case 'contingencia': return base * 0.02;
+        case 'rs': return 180;
+        case 'onboarding': return monthIndex === 0 ? 350 : 20;
+        case 'td': return 220;
+        case 'edcorp': return 110;
+        case 'software': return 350;
+        case 'epi': return 120;
+        case 'postotrab': return 180;
+        case 'overhead': return 210;
+        default: return base * 0.1;
+    }
+}
+
+function renderQuadro(idx) {
+    if (!STATE.logged) return;
+    idx = parseInt(idx, 10);
+    if (isNaN(idx) || idx < 0 || idx >= QUADROS.length) idx = 0;
+    STATE.quadro = idx;
+    
+    initQuadroSelect();
+    var sel = document.getElementById('quadro-select');
+    if (sel) sel.value = idx;
+    
+    var q = QUADROS[idx];
+    var titleTxt = document.getElementById('quadro-title-txt');
+    var descTxt = document.getElementById('quadro-desc-txt');
+    if (titleTxt) titleTxt.textContent = 'Quadro ' + (q.n < 10 ? '0' + q.n : q.n) + ': ' + q.name;
+    if (descTxt) descTxt.textContent = q.desc;
+    
+    var meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    var thead = document.getElementById('quadro-thead');
+    if (thead) {
+        var hHtml = '<tr class="border-b"><th class="p-4 sticky left-0 z-10 surface-card font-bold">Colaborador / Cargo</th>';
+        meses.forEach(function(m) {
+            hHtml += '<th class="p-4 text-right font-mono text-xs">' + m + '</th>';
+        });
+        hHtml += '<th class="p-4 text-right font-bold text-xs bg-indigo-500/10">Total Ano</th></tr>';
+        thead.innerHTML = hHtml;
+    }
+    
+    var actives = COLABS.filter(function(e) { return e.status === 'Ativo'; });
+    var tbody = document.getElementById('quadro-tbody');
+    var tfoot = document.getElementById('quadro-tfoot');
+    
+    if (tbody && tfoot) {
+        tbody.innerHTML = '';
+        var monthTotals = [0,0,0,0,0,0,0,0,0,0,0,0];
+        var grandTotal = 0;
+        
+        actives.forEach(function(emp) {
             var tr = document.createElement('tr');
-            tr.className = 'tbody-divide';
-            tr.innerHTML =
-                '<td class="p-4 tcell-strong text-sm">' + r.d + '</td>' +
-                '<td class="p-4 text-right tcell-mono font-mono text-sm">' + fmtCur(r.v) + '</td>' +
-                '<td class="p-4 text-right tcell-mono font-mono text-sm">' + fmtCur(r.v * 12) + '</td>' +
-                '<td class="p-4 text-center"><span class="pill pill-whou inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold">' + r.t + '</span></td>';
-            body.appendChild(tr);
+            tr.className = 'table-row border-b transition-colors';
+            
+            var rowHtml = '<td class="p-4 sticky left-0 z-10 surface-card"><span class="tcell-strong font-semibold block">' + emp.name + '</span><span class="tcell-muted text-xs block">' + emp.dept + ' · ' + emp.cargo + '</span></td>';
+            var empRowTotal = 0;
+            
+            for (var m = 0; m < 12; m++) {
+                var val = getQuadroValue(emp, m, q.rule);
+                empRowTotal += val;
+                monthTotals[m] += val;
+                grandTotal += val;
+                rowHtml += '<td class="p-4 text-right font-mono text-xs tcell-mono">' + fmtCur(val) + '</td>';
+            }
+            rowHtml += '<td class="p-4 text-right font-mono text-xs font-bold tcell-strong bg-indigo-500/10">' + fmtCur(empRowTotal) + '</td>';
+            tr.innerHTML = rowHtml;
+            tbody.appendChild(tr);
         });
+        
+        var fHtml = '<tr class="bg-indigo-500/15 font-bold"><td class="p-4 sticky left-0 z-10 surface-card">TOTAL GERAL MENSAL</td>';
+        monthTotals.forEach(function(mt) {
+            fHtml += '<td class="p-4 text-right font-mono text-xs">' + fmtCur(mt) + '</td>';
+        });
+        fHtml += '<td class="p-4 text-right font-mono text-xs text-indigo-600 dark:text-cyan-400">' + fmtCur(grandTotal) + '</td></tr>';
+        tfoot.innerHTML = fHtml;
     }
+    
+    buildBudgetKPIs();
+}
+
+function onQuadroChange(val) {
+    renderQuadro(val);
+}
+
+function prevQuadro() {
+    var nextIdx = (STATE.quadro - 1 + QUADROS.length) % QUADROS.length;
+    renderQuadro(nextIdx);
+}
+
+function nextQuadro() {
+    var nextIdx = (STATE.quadro + 1) % QUADROS.length;
+    renderQuadro(nextIdx);
+}
+
+function renderBudget() {
+    renderQuadro(STATE.quadro || 0);
 }
 
 /* ===== Simulador ===== */

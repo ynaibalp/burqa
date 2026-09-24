@@ -1,3 +1,4 @@
+import json
 from decimal import Decimal
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -94,12 +95,24 @@ def budget_view(request):
             'total_cost': total_cost
         })
 
+    employees_list = [
+        {
+            'name': e.name,
+            'dept': e.department.name,
+            'cargo': e.position.title,
+            'level': e.position.level,
+            'sal': float(e.salary),
+        }
+        for e in active_employees
+    ]
+
     context = {
         'annual_payroll': annual_payroll,
         'annual_charges': annual_charges,
         'total_expenses': total_expenses,
         'department_costs': department_costs,
         'expenses': expenses[:20],
+        'employees_json': json.dumps(employees_list),
     }
     return render(request, 'hr_budget/budget.html', context)
 
