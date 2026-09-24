@@ -664,8 +664,8 @@ function goView(v) {
     if (target) {
         target.classList.remove('hidden');
         hydrateView(v);
-        if (v === 'dashboard') renderDash();
-        if (v === 'employees') runFilters();
+        if (v === 'dashboard') renderDashboard();
+        if (v === 'employees') applyFilters();
         if (v === 'budget') renderBudget();
         if (v === 'simulator') updateSim();
     }
@@ -673,11 +673,12 @@ function goView(v) {
     window.scrollTo(0, 0);
 }
 function hydrateView(v) {
-    if (v === 'dashboard') { renderDash(); }
+    if (v === 'dashboard') { renderDashboard(); }
     else if (v === 'employees') { fillDeptFilter(); updateNav(); }
     else if (v === 'budget') { renderBudget(); updateNav(); }
     else if (v === 'simulator') { updateSim(); updateNav(); }
 }
+function updateNav() {}
 
 /* ===== Toast ===== */
 function toast(msg, kind) {
@@ -770,42 +771,6 @@ function renderEmployees() {
 }
 
 function empPaging(dir) { pg += dir; renderEmployees(); }
-
-/* ===== Orçamento ===== */
-function kpiRow(label, value, cls) {
-    return '<div class="surface-card glass-card border rounded-2xl p-3"><div class="flex items-center justify-between gap-3"><span class="card-label text-xs font-semibold">' + label + '</span><span class="' + cls + ' font-mono text-lg font-bold">' + value + '</span></div></div>';
-}
-function renderBudget() {
-    if (!STATE.logged) return;
-    var deptCosts = {};
-    var totalBase = 0;
-    COLABS.filter(function (e) { return e.status === 'Ativo'; }).forEach(function (e) {
-        if (!deptCosts[e.dept]) deptCosts[e.dept] = 0;
-        deptCosts[e.dept] += e.sal;
-        totalBase += e.sal;
-    });
-    var enc = 0.35;
-    var totalCost = totalBase * (1 + enc Hare);
-    $('#bud-total').textContent = fmtCur(totalCost);
-    var active = COLABS.filter(function(e){return e.status==='Ativo';}).length;
-    var budgetVal = active * 3800 * 13;
-    $('#bud-annual').textContent = fmtCur(budgetVal);
-    var pct = Math.min(100, Math.round((totalCost / (budgetVal || 1)) * 100));
-    $('#bud-pct').textContent = pct + '%';
-    $('#bud-pct-bar') && ($('#bud-pct-bar').style.width = pct + '%');
-
-    var box = document.getElementById('bud-dept');
-    if (box) {
-        box.innerHTML = '';
-        Object.keys(deptCosts).sort().forEach(function (d) {
-            var v = deptCosts[d];
-            var divC = document.createElement('div');
-            divC.className = 'flex items-center justify-between gap-4 text-sm';
-            divC.innerHTML = '<span class="tcell-strong font-semibold">' + d + '</span>' + kpiRow('', fmtCur(v * (1 + enc)), 'accent-emerald');
-            box.appendChild(divC);
-        });
-    }
-}
 
 /* ===== Orçamento ===== */
 var ENC = 0.35;                       /* encargos + benefícios sobre salário base */
