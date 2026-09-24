@@ -114,11 +114,10 @@ html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
         <div class="orb-b"></div>
     </div>
 
-    <button onclick="toggleTheme()" class="theme-btn absolute top-5 right-5 z-30 flex items-center gap-2 px-4 py-2.5 rounded-xl border backdrop-blur-md text-sm font-semibold transition-all duration-300 active:scale-95" title="Alternar tema">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path id="theme-inline-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" class="hidden"></path>
-        </svg>
-        <span id="theme-inline-label">Claro</span>
+    <button onclick="toggleTheme()" class="theme-btn absolute top-6 right-6 z-30 group flex items-center gap-2.5 px-4 py-2.5 rounded-full border backdrop-blur-md transition-all duration-300 active:scale-95 shadow-lg font-semibold text-sm" title="Alternar entre Modo Claro e Escuro">
+        <svg class="theme-icon-moon w-5 h-5 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <svg class="theme-icon-sun w-5 h-5 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <span class="theme-label text-xs font-semibold uppercase tracking-wider">Claro</span>
     </button>
 
     <div id="login-card" class="glass-card relative z-10 w-full max-w-md rounded-3xl border p-8 md:p-10 backdrop-blur-2xl transition-transform duration-500 animate-login-in">
@@ -169,9 +168,16 @@ html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
                 <span class="tmuted text-xs block font-mono">Demo Executiva</span>
             </div>
         </div>
-        <button onclick="doLogout()" class="theme-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl border transition-all duration-200 hover:opacity-90">
-            Sair
-        </button>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleTheme()" class="theme-btn group flex items-center gap-2.5 px-4 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 active:scale-95 font-semibold text-xs uppercase tracking-wider" title="Alternar entre Modo Claro e Escuro">
+                <svg class="theme-icon-moon w-4 h-4 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <svg class="theme-icon-sun w-4 h-4 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="theme-label">Claro</span>
+            </button>
+            <button onclick="doLogout()" class="theme-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl border transition-all duration-200 hover:opacity-90">
+                Sair
+            </button>
+        </div>
     </div>
 
     <div class="surface-card banner-area border rounded-3xl p-8 md:p-10 relative overflow-hidden">
@@ -244,7 +250,14 @@ html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
             <h2 class="twhite text-2xl font-extrabold tracking-tight">1 · Funcionários</h2>
             <p class="tmuted text-sm" id="emp-subtitle">Quadro ativo da empresa</p>
         </div>
-        <button onclick="goView('dashboard')" class="ml-auto glass-card border px-5 py-2.5 rounded-2xl text-sm font-semibold tcell-strong hover:opacity-85 transition-opacity">← Dashboard</button>
+        <div class="ml-auto flex items-center gap-3">
+            <button onclick="toggleTheme()" class="theme-btn group flex items-center gap-2 px-3.5 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 active:scale-95 font-semibold text-xs uppercase tracking-wider" title="Alternar entre Modo Claro e Escuro">
+                <svg class="theme-icon-moon w-4 h-4 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <svg class="theme-icon-sun w-4 h-4 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="theme-label">Claro</span>
+            </button>
+            <button onclick="goView('dashboard')" class="glass-card border px-5 py-2.5 rounded-2xl text-sm font-semibold tcell-strong hover:opacity-85 transition-opacity">← Dashboard</button>
+        </div>
     </div>
 
     <!-- Dados demográficos -->
@@ -335,10 +348,17 @@ html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
             <h2 class="nav-title text-2xl font-extrabold tracking-tight">2 · Orçamento RH</h2>
             <p id="budg-sub" class="nav-sub text-sm">Análise de custos por departamento</p>
         </div>
-        <button onclick="openSimFromBudget()" class="btn-accent px-5 py-3 rounded-2xl text-sm font-bold text-white inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 active:scale-95 transition-all duration-200 shadow-lg shadow-indigo-600/30">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
-            Simular Cenário
-        </button>
+        <div class="ml-auto flex items-center gap-3">
+            <button onclick="toggleTheme()" class="theme-btn group flex items-center gap-2 px-3.5 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 active:scale-95 font-semibold text-xs uppercase tracking-wider" title="Alternar entre Modo Claro e Escuro">
+                <svg class="theme-icon-moon w-4 h-4 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <svg class="theme-icon-sun w-4 h-4 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="theme-label">Claro</span>
+            </button>
+            <button onclick="openSimFromBudget()" class="btn-accent px-5 py-3 rounded-2xl text-sm font-bold text-white inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 active:scale-95 transition-all duration-200 shadow-lg shadow-indigo-600/30">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                Simular Cenário
+            </button>
+        </div>
     </div>
 
     <!-- KPIs orçamento -->
@@ -405,10 +425,17 @@ html.dark .mod-desc{ color:#94a3b8; } html.light .mod-desc{ color:#475569; }
             <h2 class="twhite text-2xl font-extrabold tracking-tight">3 · Simulador de Cenários</h2>
             <p id="sim-sub" class="tmuted text-sm">Ajuste variáveis e veja o impacto na folha</p>
         </div>
-        <button onclick="goView('budget')" class="theme-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold hover:scale-[1.02] active:scale-95 transition-all duration-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M3 8h18M9 12h6l-3 6-3-6z"/></svg>
-            Ver Orçamento
-        </button>
+        <div class="ml-auto flex items-center gap-3">
+            <button onclick="toggleTheme()" class="theme-btn group flex items-center gap-2 px-3.5 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 active:scale-95 font-semibold text-xs uppercase tracking-wider" title="Alternar entre Modo Claro e Escuro">
+                <svg class="theme-icon-moon w-4 h-4 transition-transform duration-300 group-hover:-rotate-12 text-indigo-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <svg class="theme-icon-sun w-4 h-4 transition-transform duration-300 group-hover:rotate-45 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="theme-label">Claro</span>
+            </button>
+            <button onclick="goView('budget')" class="theme-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold hover:scale-[1.02] active:scale-95 transition-all duration-200">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M3 8h18M9 12h6l-3 6-3-6z"/></svg>
+                Ver Orçamento
+            </button>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -523,7 +550,9 @@ var STATE = {
     review: 0,              // sua folha
     simReview: 0,
     simHires: 0,
-simSalary: 1800,    sim: { rea: 0, hir: 0, sal: 1800, enc: 35 }
+    simSalary: 1800,
+    theme: localStorage.getItem('burqa_theme') || 'dark',
+    sim: { rea: 0, hir: 0, sal: 1800, enc: 35 }
 };
 
 /* ===== Dados de demonstração ===== */
@@ -580,9 +609,16 @@ function setTheme(mode) {
 }
 function toggleTheme() { setTheme(STATE.theme === 'dark' ? 'light' : 'dark'); }
 function updateThemeIcon() {
-    var sun = document.getElementById('ic-sun'), moon = document.getElementById('ic-moon');
-    if (STATE.theme === 'dark') { if(sun) sun.classList.remove('hidden'); if(moon) moon.classList.add('hidden'); }
-    else { if(sun) sun.classList.add('hidden'); if(moon) moon.classList.remove('hidden'); }
+    var isDark = STATE.theme === 'dark';
+    document.querySelectorAll('.theme-icon-sun').forEach(function(el) {
+        if (isDark) el.classList.remove('hidden'); else el.classList.add('hidden');
+    });
+    document.querySelectorAll('.theme-icon-moon').forEach(function(el) {
+        if (isDark) el.classList.add('hidden'); else el.classList.remove('hidden');
+    });
+    document.querySelectorAll('.theme-label').forEach(function(el) {
+        el.textContent = isDark ? 'Claro' : 'Escuro';
+    });
 }
 
 /* ===== Acesso / Login ===== */
@@ -934,6 +970,8 @@ function hashChanged() {
     goView(v);
 }
 function init() {
+    STATE.theme = localStorage.getItem('burqa_theme') || 'dark';
+    setTheme(STATE.theme);
     fillDeptFilter();
     updateThemeIcon();
     var h = (location.hash || '#/login');
